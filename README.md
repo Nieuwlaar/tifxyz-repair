@@ -27,7 +27,7 @@ All CPU-only, no GPU required. Fast: a full validate pass runs at ~1,000 patches
 ## Install
 
 ```bash
-pip install "tifxyz-doctor[deep] @ git+https://github.com/YOURNAME/tifxyz-doctor"
+pip install "tifxyz-doctor[deep] @ git+https://github.com/Nieuwlaar/tifxyz-doctor"
 # or from a checkout:
 pip install -e ".[deep]"
 ```
