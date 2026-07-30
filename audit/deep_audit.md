@@ -2,6 +2,8 @@
 
 Patches inspected: **5210** (1 failed to load). Split: 4917 ordinary patches, 293 band/backup surfaces (long multi-winding strips).
 
+**Suspect verification.** We hand-checked the top flagged patches in both groups. Band surfaces: suspect pairs sit at median 8.9-voxel 3D distance across ~309-cell UV separation — legitimate adjacent-winding clearance, not duplicated geometry. Top ordinary patches (elongated strips): pairs at 6-9 voxels across 121-243 cells UV, zero near-duplicate (<1 voxel) pairs — consistent with tight winding rather than confirmed sheet switches. In a human-verified corpus this is the expected outcome; the flag's value is marking close-approach zones where automatic mesh growth risks jumping sheets, and in screening *unverified* auto-grown patches.
+
 **Interpretation note.** The `self_proximity` metric flags grid-distant vertex pairs that come close in 3D. For *ordinary local patches* this is a sheet-switch/merger red flag. For *band surfaces* that legitimately wrap around the scroll, adjacent windings naturally pass within a few voxels of each other — we verified the flagged band pairs sit at median 8.9-voxel distance with ~309-cell UV separation and are NOT duplicated geometry. Band-surface flags below are therefore expected geometry, reported separately; they double as a measurement of local winding clearance (min observed: 0.7 voxels).
 
 ## Ordinary patches
