@@ -78,15 +78,19 @@ def cmd_report(args) -> int:
 
 def cmd_inspect(args) -> int:
     try:
-        from .deep import inspect_patch, render_defect_map
+        from .deep import defect_points, export_pointset, inspect_patch, render_defect_map
     except ImportError as e:
         print(f"inspect requires the [deep] extra (scipy, matplotlib): {e}", file=sys.stderr)
         return 2
     exit_code = 0
+    export_items = []
     for target in args.paths:
         for p in find_patches(Path(target)):
             patch = load_patch(p)
-            metrics = inspect_patch(patch)
+            metrics = inspect_patch(patch, collect_cells=bool(args.export_pointset))
+            if args.export_pointset:
+                export_items.append((p.name, defect_points(patch, metrics)))
+                metrics.pop("defect_cells", None)  # keep the printed report readable
             print(f"== {p}")
             print(json.dumps(metrics, indent=2))
             if args.png_dir:
@@ -95,6 +99,12 @@ def cmd_inspect(args) -> int:
                 png = out_dir / (p.name + ".png")
                 render_defect_map(patch, metrics, png)
                 print(f"   wrote {png}", file=sys.stderr)
+    if args.export_pointset:
+        out = Path(args.export_pointset)
+        data = export_pointset(export_items, out)
+        n_cols = len(data["collections"])
+        n_pts = sum(len(c["points"]) for c in data["collections"].values())
+        print(f"   wrote {out} ({n_cols} collections, {n_pts} points)", file=sys.stderr)
     return exit_code
 
 
@@ -136,6 +146,12 @@ def main(argv=None) -> int:
     )
     p_ins.add_argument("paths", nargs="+")
     p_ins.add_argument("--png-dir", help="write per-patch defect-map PNGs into this directory")
+    p_ins.add_argument(
+        "--export-pointset",
+        metavar="OUT.json",
+        help="write defect locations as a VC3D point-collection JSON "
+        "(load it from VC3D's Points panel to see flagged zones on the scroll data)",
+    )
     p_ins.set_defaults(func=cmd_inspect)
 
     args = ap.parse_args(argv)

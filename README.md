@@ -77,6 +77,14 @@ tifxyz-doctor inspect segment.tifxyz --png-dir defect_maps/
 
 Prints JSON metrics and (optionally) renders per-patch defect-map PNGs (validity, spacing distortion, z-height).
 
+#### Visualize findings in VC3D
+
+```bash
+tifxyz-doctor inspect segment.tifxyz --export-pointset defects.json
+```
+
+Exports the flagged locations — sheet-switch suspects (red), interior-hole borders (orange), worst stretched cells (yellow) — as a VC3D point-collection JSON (`vc_pointcollections_json_version` `"1"`, the same format `vc_calc_surface_metrics` consumes; schema documented in [`deep.py`](src/tifxyz_doctor/deep.py)). In VC3D, hit **Load** in the Points panel and pick `defects.json`: each patch shows up as `doctor_switch_*` / `doctor_hole_*` / `doctor_stretch_*` collections overlaid at the flagged voxel positions on the scroll data. [`audit/demo_pointset_auto_grown_20260429215626691_sel_20260512_102916_79.json`](audit/demo_pointset_auto_grown_20260429215626691_sel_20260512_102916_79.json) is a ready-made example exported from one of the flagged `spiral-input` patches (1,075 sheet-switch suspect points + 326 hole-border points).
+
 ## Use as a library
 
 All checks are importable — embed them in pipelines, dataset publication gates, or CI:

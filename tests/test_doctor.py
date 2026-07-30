@@ -227,6 +227,121 @@ class TestDeep:
         assert m["self_proximity"]["pairs"] > 0
 
 
+def make_defective_patch(tmp: Path) -> Path:
+    """Synthetic patch with all three exportable defect families: a sheet
+    switch (folded right half), an interior hole, and a stretched vertex."""
+    d = make_patch(tmp, shape=(30, 40))
+    x = tifffile.imread(d / "x.tif")
+    y = tifffile.imread(d / "y.tif")
+    z = tifffile.imread(d / "z.tif")
+    x[:, 20:] = x[:, 19::-1]  # fold → self-proximity suspects
+    for r, c in ((10, 10), (10, 11)):  # interior hole
+        x[r, c] = y[r, c] = z[r, c] = -1.0
+    z[20, 5] += 200.0  # strongly stretched vertex
+    z[5, 30] += 50.0  # mildly stretched vertex
+    tifffile.imwrite(d / "x.tif", x.astype(np.float32))
+    tifffile.imwrite(d / "y.tif", y.astype(np.float32))
+    tifffile.imwrite(d / "z.tif", z.astype(np.float32))
+    return d
+
+
+class TestPointsetExport:
+    """Round-trip the export against the schema PointCollections::loadFromJSON
+    parses (villa/volume-cartographer core/src/PointCollections.cpp)."""
+
+    def test_export_matches_vc3d_schema(self, tmp_path):
+        pytest.importorskip("scipy")
+        from tifxyz_doctor.deep import defect_points, export_pointset, inspect_patch
+
+        d = make_defective_patch(tmp_path)
+        patch = load_patch(d)
+        metrics = inspect_patch(patch, collect_cells=True)
+        cells = metrics["defect_cells"]
+        assert cells["self_proximity"] and cells["hole_boundary"] and cells["stretch"]
+        # hole cells themselves are invalid → only their valid ring is exported
+        assert [10, 10] not in cells["hole_boundary"]
+        assert [10, 9] in cells["hole_boundary"]
+        # stretch cells are exactly the endpoints of the over-threshold edges,
+        # worst edge first: every cell of the 200-voxel spike sorts before any
+        # cell of the 50-voxel one
+        big = {(20, 4), (20, 5), (20, 6), (19, 5), (21, 5)}
+        small = {(5, 29), (5, 30), (5, 31), (4, 30), (6, 30)}
+        stretch = [tuple(rc) for rc in cells["stretch"]]
+        assert set(stretch) == big | small
+        assert set(stretch[: len(big)]) == big
+
+        out = tmp_path / "defects.json"
+        export_pointset([(d.name, defect_points(patch, metrics))], out)
+        data = json.loads(out.read_text())
+
+        # top level: loadFromJSON requires the version key to be the *string*
+        # "1" (PointCollections.cpp:590) and "collections" to be an object
+        # keyed by stringified uint64 ids (:598-604)
+        assert data["vc_pointcollections_json_version"] == "1"
+        assert isinstance(data["vc_pointcollections_json_version"], str)
+        assert isinstance(data["collections"], dict)
+
+        names = set()
+        all_point_ids = []
+        for cid, col in data["collections"].items():
+            int(cid)  # must parse per stoull
+            # required collection fields (PointCollections.cpp:147-161)
+            assert isinstance(col["name"], str)
+            assert isinstance(col["points"], dict)
+            assert isinstance(col["metadata"], dict)
+            assert isinstance(col["metadata"]["winding_is_absolute"], bool)
+            assert len(col["color"]) == 3
+            assert all(0.0 <= v <= 1.0 for v in col["color"])
+            names.add(col["name"])
+            for pid, pt in col["points"].items():
+                int(pid)
+                all_point_ids.append(pid)
+                # required point field "p" = [x, y, z] (PointCollections.cpp:59)
+                assert len(pt["p"]) == 3
+                assert all(isinstance(v, float) for v in pt["p"])
+                assert pt["wind_a"] is None
+                assert isinstance(pt["creation_time"], int)
+        # point ids must be unique across all collections (loader rebuilds a
+        # flat id→point map, PointCollections.cpp:633-639)
+        assert len(all_point_ids) == len(set(all_point_ids))
+        assert names == {
+            f"doctor_switch_{d.name}",
+            f"doctor_hole_{d.name}",
+            f"doctor_stretch_{d.name}",
+        }
+
+        # coordinate order: a known suspect cell's grid values must appear as
+        # (x, y, z) — make_patch encodes col in x, row in y, constant z
+        r, c = cells["self_proximity"][0]
+        expected_p = [float(patch.x[r, c]), float(patch.y[r, c]), float(patch.z[r, c])]
+        switch = next(v for v in data["collections"].values() if v["name"] == f"doctor_switch_{d.name}")
+        assert expected_p in [pt["p"] for pt in switch["points"].values()]
+
+    def test_export_caps_points(self, tmp_path):
+        pytest.importorskip("scipy")
+        from tifxyz_doctor.deep import defect_points, export_pointset, inspect_patch
+
+        d = make_defective_patch(tmp_path)
+        patch = load_patch(d)
+        metrics = inspect_patch(patch, collect_cells=True)
+        data = export_pointset([(d.name, defect_points(patch, metrics))], tmp_path / "o.json", max_points=5)
+        assert all(len(c["points"]) <= 5 for c in data["collections"].values())
+
+    def test_cli_export_pointset(self, tmp_path, capsys):
+        pytest.importorskip("scipy")
+        from tifxyz_doctor.cli import main
+
+        d = make_defective_patch(tmp_path)
+        out = tmp_path / "pointset.json"
+        assert main(["inspect", str(d), "--export-pointset", str(out)]) == 0
+        data = json.loads(out.read_text())
+        assert data["vc_pointcollections_json_version"] == "1"
+        assert any(c["name"].startswith("doctor_switch_") for c in data["collections"].values())
+        # printed metrics stay clean JSON without the cell dump
+        printed = capsys.readouterr().out
+        assert "defect_cells" not in printed
+
+
 class TestCli:
     def test_cli_validate_exit_codes(self, tmp_path, capsys):
         from tifxyz_doctor.cli import main
