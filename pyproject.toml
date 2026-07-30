@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tifxyz-repair"
-version = "0.2.0"
+version = "0.2.1"
 description = "Validate, audit, and repair tifxyz surface-mesh patches from the Vesuvius Challenge (stale bbox metadata, invalid vertices, geometry defects)"
 readme = "README.md"
 license = { text = "MIT" }

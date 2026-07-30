@@ -122,7 +122,7 @@ Using the issue's own definition, valid vertices lying outside the recorded box,
 
 Counting drift in either direction raises this to 130 of 4,922. That includes boxes which over-cover: they lose no vertices, but they make bbox-based spatial queries match patches they shouldn't. Ten patches drift by more than 10,000 voxels: four under-covering, six over-covering. A further 289 snapshots under `verified_patches/backups/` bring the audited total to 5,211 patches and 137 flagged.
 
-All 35,150 audited patches from the *unverified* corpus are also clean ([`audit/unverified_audit.md`](audit/unverified_audit.md)), which matches what the issue reports and points at the verification and re-optimization pipeline as the source rather than patch generation.
+The *unverified* corpus is also clean: all **40,782** published unverified patch directories validate with zero findings ([`audit/unverified_audit.md`](audit/unverified_audit.md)), independently reproducing the issue's own full scan (0/40,782) and pointing at the verification and re-optimization pipeline as the source rather than patch generation.
 
 By contrast, all **817 published segment meshes across 7 scrolls** (PHerc 139, 172, 343P, 500P2, 814, 1667, Paris 4) carry correct bboxes, which scopes this corruption to the patch and re-optimization pipeline rather than the finished flatboi output. (That check is bbox-integrity only; for *geometric* validation of published segments see [joe-carr-data/windcheck](https://github.com/joe-carr-data/windcheck), which certifies self-intersections and reaches different conclusions about segment quality on a different axis.)
 
