@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tifxyz-doctor"
+version = "0.1.0"
+description = "Validate, audit, and repair tifxyz surface-mesh patches from the Vesuvius Challenge (stale bbox metadata, invalid vertices, geometry defects)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Vesuvius community contributor" }]
+dependencies = [
+    "numpy>=1.24",
+    "tifffile>=2023.7.10",
+    "imagecodecs>=2023.3.16",
+]
+
+[project.optional-dependencies]
+deep = ["scipy>=1.10", "matplotlib>=3.7"]
+dev = ["pytest>=7.4", "scipy>=1.10", "matplotlib>=3.7"]
+
+[project.scripts]
+tifxyz-doctor = "tifxyz_doctor.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
