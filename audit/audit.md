@@ -13,7 +13,7 @@ Patches audited: **5211**
 |---|---|
 | bbox-stale | 137 |
 
-## Stale bboxes (villa #1272) — 137 patches, worst 25 by drift
+## Stale bboxes (villa #1272). 137 patches, worst 25 by drift
 
 | drift (voxels) | valid vertices outside stored bbox | patch |
 |---|---|---|

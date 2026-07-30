@@ -12,7 +12,7 @@ Meshes audited: **817** across 7 scrolls (every `segments/*/mesh/*.tifxyz` on th
 | PHerc1667 | 79 | 0 |
 | PHercParis4 | 254 | 0 |
 
-Error checks across all scrolls: **none — all published segment meshes are clean**
+Error checks across all scrolls: **none, all published segment meshes are clean**
 
 
-**Interpretation.** Every published segment mesh is clean, while 128/5,211 verified *patches* (see `audit.md`) and ~3.6% of sampled *unverified* patches carry stale bboxes. This scopes the villa #1272 corruption to the re-optimization / patch-editing pipeline (auto-grown, lasagna, same-wrap re-fitting) — the published segment meshes, written once by flatboi, are unaffected. Good news for anyone consuming the segment meshes directly; the fix still matters for the patch corpora that feed spiral fitting.
+**Interpretation.** Every published segment mesh is clean, while 128/5,211 verified *patches* (see `audit.md`) and ~3.6% of sampled *unverified* patches carry stale bboxes. This scopes the villa #1272 corruption to the re-optimization / patch-editing pipeline (auto-grown, lasagna, same-wrap re-fitting). the published segment meshes, written once by flatboi, are unaffected. Good news for anyone consuming the segment meshes directly; the fix still matters for the patch corpora that feed spiral fitting.

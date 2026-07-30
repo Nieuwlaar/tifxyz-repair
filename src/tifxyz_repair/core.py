@@ -9,9 +9,9 @@ Semantics deliberately mirror VC3D's C++ implementation
 - A vertex is *invalid* when any of the following holds, matching what the
   loader (``load_quad_from_tifxyz_impl``) does before ``QuadSurface::bbox()``
   is ever called:
-    1. ``z <= 0``            — the loader rewrites the point to (-1,-1,-1)
+    1. ``z <= 0``: the loader rewrites the point to (-1, -1, -1)
     2. ``mask.tif`` channel 0 below 255, when a usable mask is present
-    3. ``x == -1``           — the test ``bbox()`` itself performs
+    3. ``x == -1``: the test ``bbox()`` itself performs
   Rule 3 alone is *not* sufficient: rules 1 and 2 have already been applied
   to the in-memory grid, so replaying only rule 3 over the raw TIFFs counts
   points VC3D treats as invalid and inflates the extent.

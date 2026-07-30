@@ -1,10 +1,10 @@
-# Deep geometry audit — PHercParis4 spiral-input verified patches
+# Deep geometry audit, PHercParis4 spiral-input verified patches
 
 Patches inspected: **5210** (1 failed to load). Split: 4917 ordinary patches, 293 band/backup surfaces (long multi-winding strips).
 
-Validity follows VC3D's loader (`z<=0`, `mask.tif` channel 0 `<255`, and `x==-1` all invalidate) — see the README. Numbers below were regenerated after that correction.
+Validity follows VC3D's loader (`z<=0`, `mask.tif` channel 0 `<255`, and `x==-1` all invalidate), see the README. Numbers below were regenerated after that correction.
 
-**Suspect verification.** We hand-checked the top flagged patches in both groups. Band surfaces: suspect pairs sit at median 8.9-voxel 3D distance across ~309-cell UV separation — legitimate adjacent-winding clearance, not duplicated geometry. Top ordinary patches (elongated strips): pairs at 6-9 voxels across 121-243 cells UV, zero near-duplicate (<1 voxel) pairs — consistent with tight winding rather than confirmed sheet switches. In a human-verified corpus this is the expected outcome; the flag's value is marking close-approach zones where automatic mesh growth risks jumping sheets, and in screening *unverified* auto-grown patches. These are heuristic cues, not a validated sheet-switch detector — for rigorous evaluation of that specific problem see aviad12g/tifxyz-doctor's sealed-holdout benchmark and joe-carr-data/windcheck's self-intersection certificates.
+**Suspect verification.** We hand-checked the top flagged patches in both groups. Band surfaces: suspect pairs sit at median 8.9-voxel 3D distance across ~309-cell UV separation, legitimate adjacent-winding clearance, not duplicated geometry. Top ordinary patches (elongated strips): pairs at 6-9 voxels across 121-243 cells UV, zero near-duplicate (<1 voxel) pairs, consistent with tight winding rather than confirmed sheet switches. In a human-verified corpus this is the expected outcome; the flag's value is marking close-approach zones where automatic mesh growth risks jumping sheets, and in screening *unverified* auto-grown patches. These are heuristic cues, not a validated sheet-switch detector, for rigorous evaluation of that specific problem see aviad12g/tifxyz-doctor's sealed-holdout benchmark and joe-carr-data/windcheck's self-intersection certificates.
 
 ## Ordinary patches
 

@@ -94,7 +94,7 @@ def summarize_markdown(results: list[dict[str, Any]], out: Optional[Path] = None
     if stale:
         lines += [
             "",
-            f"## Stale bboxes (villa #1272) — {len(stale)} patches, worst {top_n} by drift",
+            f"## Stale bboxes (villa #1272). {len(stale)} patches, worst {top_n} by drift",
             "",
             "| drift (voxels) | valid vertices outside stored bbox | patch |",
             "|---|---|---|",

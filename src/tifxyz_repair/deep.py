@@ -7,8 +7,8 @@ Challenge 2026 Open Problems post ("mergers, holes, sheet switches"):
 - grid-spacing distortion: adjacent-vertex distances vs the expected
   1/scale voxels (stretch or compression concentrations)
 - self-proximity: vertex pairs far apart in grid (UV) space but close in
-  3D — the signature of a sheet switch or a merger folding a mesh onto a
-  neighboring wrap
+  3D, the signature of a sheet switch or a merger folding a mesh
+  onto a neighboring wrap
 - normal flips: adjacent quads whose normals point in opposite directions
 
 All metrics are conservative *detectors*: they flag places a human (or a
@@ -171,7 +171,7 @@ def inspect_patch(
 #
 #   {
 #     "vc_pointcollections_json_version": "1",   # REQUIRED; must be the
-#                                                #   *string* "1" — loadFromJSON
+#                                                #   *string* "1", loadFromJSON
 #                                                #   calls get_string() and
 #                                                #   rejects the file otherwise
 #                                                #   (core/src/PointCollections.cpp:590)
@@ -184,7 +184,7 @@ def inspect_patch(
 #         "points": {                            # REQUIRED (PointCollections.cpp:149);
 #           "<point-id>": {                      #   keys are stringified uint64 ids
 #                                                #   (PointCollections.cpp:152); keep them
-#                                                #   unique across ALL collections — the
+#                                                #   unique across ALL collections, the
 #                                                #   loader rebuilds a flat id->point map
 #                                                #   (PointCollections.cpp:633-639)
 #             "p": [x, y, z],                    # REQUIRED (PointCollections.cpp:59);
@@ -209,7 +209,7 @@ def inspect_patch(
 #         "metadata": {                          # REQUIRED object (PointCollections.cpp:160)
 #           "winding_is_absolute": false         # optional bool, default true when absent
 #                                                #   (PointCollections.cpp:94-100); we write
-#                                                #   false since our wind_a are all null —
+#                                                #   false since our wind_a are all null -
 #                                                #   these are defect markers, not absolute
 #                                                #   winding-number annotations
 #         },

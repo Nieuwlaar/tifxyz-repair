@@ -102,8 +102,8 @@ def check_vertices(patch: Patch) -> list[Finding]:
         )
 
     # Inconsistent sentinel: y == -1 on a vertex the loader still considers
-    # valid (x != -1, z > 0, mask retained). z == -1 needs no check — the
-    # loader's z<=0 rule already invalidates it — but a lone y sentinel
+    # valid (x != -1, z > 0, mask retained). z == -1 needs no check since
+    # the loader's z<=0 rule already invalidates it, but a lone y sentinel
     # survives into meshes and bboxes as a coordinate on the -1 plane.
     partial = valid & (patch.y == -1)
     n_partial = int(partial.sum())
@@ -113,7 +113,7 @@ def check_vertices(patch: Patch) -> list[Finding]:
                 "partial-sentinel",
                 "warning",
                 f"{n_partial} vertices have y == -1 but remain valid under the "
-                f"loader's rules (x != -1, z > 0, mask retained) — likely corrupt",
+                f"loader's rules (x != -1, z > 0, mask retained), so likely corrupt",
                 count=n_partial,
             )
         )
@@ -163,7 +163,7 @@ def check_meta_fields(patch: Patch) -> list[Finding]:
                     _f(
                         "meta-voxelsize",
                         "error",
-                        f"{key} is {v!r} — zero/invalid voxel size silently discards "
+                        f"{key} is {v!r}. A zero or invalid voxel size silently discards "
                         f"segments downstream (villa #1226 failure class)",
                         key=key,
                         value=v,
