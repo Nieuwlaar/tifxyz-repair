@@ -230,6 +230,37 @@ class TestLoaderSemantics:
         assert not p.valid[:, 7].any()
         assert p.valid[:, :7].all()
 
+    def test_mask_upscale_any_pixel_invalidates_block(self, tmp_path):
+        """The loader walks every mask pixel and invalidates its (src // scale)
+        grid cell, so one below-threshold pixel anywhere in a scale x scale
+        block kills that vertex. Sampling a single pixel per block (plain
+        striding) would keep vertices VC3D discards."""
+        d = tmp_path / "block"
+        d.mkdir()
+        ys, xs = np.mgrid[0:8, 0:8].astype(np.float32)
+        x, y, z = 100 + xs * 20, 200 + ys * 20, np.full((8, 8), 300.0, np.float32)
+        mask = np.full((16, 16), 255, np.uint8)  # 2x the grid
+        mask[0, 15] = 0  # only the second pixel of grid cell (0, 7)'s block
+        self._write(d, x, y, z, mask=mask)
+        p = load_patch(d)
+        assert not p.valid[0, 7], "any masked pixel in the block must invalidate"
+        assert p.valid[0, :7].all() and p.valid[1:, :].all()
+
+    def test_mask_planar_separate_uses_channel0(self, tmp_path):
+        """PLANARCONFIG_SEPARATE multi-channel masks come back from tifffile
+        as (C, H, W); channel 0 must still be the mask plane."""
+        d = tmp_path / "planar"
+        d.mkdir()
+        ys, xs = np.mgrid[0:10, 0:10].astype(np.float32)
+        x, y, z = 100 + xs * 20, 200 + ys * 20, np.full((10, 10), 300.0, np.float32)
+        mask = np.full((3, 10, 10), 255, np.uint8)  # (C, H, W)
+        mask[0, :, 9] = 0  # channel 0 masks the last column
+        tifffile.imwrite(d / "mask.tif", mask, planarconfig="separate", photometric="rgb")
+        self._write(d, x, y, z)
+        p = load_patch(d)
+        assert not p.valid[:, 9].any()
+        assert p.valid[:, :9].all()
+
     def test_no_false_positive_from_masked_outliers(self, tmp_path):
         """Regression for the exact bug this class documents: a patch whose
         stored bbox is correct under loader semantics must not be flagged
@@ -249,6 +280,54 @@ class TestLoaderSemantics:
         findings = validate_patch(load_patch(d))
         assert not get(findings, "bbox-stale"), "correct bbox must not be reported stale"
         assert repair_bbox(load_patch(d)) is None, "must not rewrite a correct bbox"
+
+
+class TestRobustness:
+    def test_mismatched_grids_do_not_crash(self, tmp_path):
+        """A truncated tif (mismatched grid shapes) must be reported, not
+        crash validate/fix or abort the rest of a batch."""
+        d = make_patch(tmp_path, name="broken")
+        tifffile.imwrite(d / "z.tif", np.full((5, 5), 300.0, np.float32))
+        p = load_patch(d)
+        assert not p.valid.any()
+        assert compute_bbox(p) is None
+        assert repair_bbox(p, dry_run=True) is None  # must not raise
+        findings = validate_patch(p)
+        assert get(findings, "grid-shape")
+
+    def test_fix_continues_past_corrupt_patch(self, tmp_path, capsys):
+        from tifxyz_repair.cli import main
+
+        broken = make_patch(tmp_path, name="a_broken", bbox=[[0, 0, 0], [1, 1, 1]])
+        tifffile.imwrite(broken / "y.tif", np.zeros((3, 3), np.float32))
+        make_patch(tmp_path, name="b_stale", bbox=[[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]])
+        code = main(["fix", str(tmp_path), "--dry-run"])
+        out = capsys.readouterr().out
+        assert "b_stale" in out, "later patches must still be processed"
+        assert code in (0, 1)
+
+    def test_nonexistent_path_exits_2(self, tmp_path, capsys):
+        from tifxyz_repair.cli import main
+
+        assert main(["validate", str(tmp_path / "no_such_dir")]) == 2
+        assert main(["fix", str(tmp_path / "no_such_dir"), "--dry-run"]) == 2
+        err = capsys.readouterr().err
+        assert "does not exist" in err
+
+    def test_empty_dir_exits_2(self, tmp_path):
+        from tifxyz_repair.cli import main
+
+        (tmp_path / "empty").mkdir()
+        assert main(["validate", str(tmp_path / "empty")]) == 2
+
+    def test_non_ascii_meta_reads_as_utf8(self, tmp_path):
+        """meta.json is JSON, hence UTF-8; the locale encoding must not
+        matter (Windows cp1252 boxes read it identically)."""
+        d = make_patch(tmp_path, extra_meta={"source": "PHercParis4 – trémie"})
+        p = load_patch(d)
+        assert p.meta_error is None
+        assert p.meta["source"] == "PHercParis4 – trémie"
+        assert repair_bbox(p, dry_run=True) is None  # bbox is correct
 
 
 class TestDiscovery:

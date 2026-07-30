@@ -1,5 +1,7 @@
 # tifxyz-repair
 
+[![tests](https://github.com/Nieuwlaar/tifxyz-repair/actions/workflows/tests.yml/badge.svg)](https://github.com/Nieuwlaar/tifxyz-repair/actions/workflows/tests.yml)
+
 **Detect *and repair* silent metadata corruption in `tifxyz` surface-mesh patches from the [Vesuvius Challenge](https://scrollprize.org).**
 
 `tifxyz` is the grid-topology mesh format used by [VC3D](https://github.com/ScrollPrize/villa/tree/main/volume-cartographer) and the whole Vesuvius segmentation pipeline: a directory with `x.tif`/`y.tif`/`z.tif` (float32 grids of 3D vertices) plus a `meta.json` sidecar. Metadata in these sidecars can silently go stale, and downstream tools then quietly drop the affected patches.
@@ -40,7 +42,7 @@ tifxyz-repair fix verified_patches/             # recompute + write (keeps meta.
 tifxyz-repair fix patch/ --strip-bbox           # or remove bbox (mirrors vc_tifxyz_trim; VC3D recomputes lazily)
 ```
 
-`fix` only ever touches the `bbox` field; every other byte of `meta.json` is preserved.
+`fix` only ever modifies the `bbox` field; every other field is preserved (values and key order) and the file is re-serialized in VC3D's canonical writer format (indent 4, trailing newline) — so for VC3D-written files only the bbox bytes change.
 
 ### Validate one patch (or a whole tree)
 
@@ -105,7 +107,7 @@ The reference implementation for this format is C++ (`QuadSurface.cpp` in villa)
 
 - **Validity.** A vertex is invalid if any of these holds, in the order the loader applies them (`load_quad_from_tifxyz_impl`):
   1. `z <= 0`, which makes the loader rewrite the point to `(-1, -1, -1)` (the comment in the source reads *"Invalidate by z<=0"*). Watch the IEEE detail: `NaN <= 0` is false, so a NaN `z` stays valid. This matches that behaviour and reports it through `nan-vertices` instead.
-  2. `mask.tif` present and channel 0 below 255, with integer-multiple decimation when the mask is larger than the grid.
+  2. `mask.tif` present and channel 0 below 255. When the mask is an integer-multiple upscale of the grid, every mask pixel maps onto grid cell `(src // scale)`, so a vertex survives only if *all* pixels of its block pass — the loader walks pixels, not blocks.
   3. `x == -1`, the test `QuadSurface::bbox()` itself performs.
 
   Testing only rule 3 against the raw TIFFs counts points VC3D discards, inflating the extent. That is exactly how v0.1.0 of this tool produced 7 false positives; see [`audit/`](audit/) and the regression tests in `TestLoaderSemantics`.

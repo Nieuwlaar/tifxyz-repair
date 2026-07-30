@@ -288,7 +288,7 @@ def export_pointset(
     data = build_pointset(items, max_points=max_points)
     out_json = Path(out_json)
     out_json.parent.mkdir(parents=True, exist_ok=True)
-    out_json.write_text(json.dumps(data, indent=4) + "\n")
+    out_json.write_text(json.dumps(data, indent=4) + "\n", encoding="utf-8")
     return data
 
 

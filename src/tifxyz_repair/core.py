@@ -89,6 +89,11 @@ class Patch:
         considers invalid, which inflates the computed extent and produces
         false \"stale bbox\" reports. All three rules are applied here.
         """
+        # Mismatched grid shapes cannot be interpreted; treat every vertex as
+        # invalid and let the grid-shape check report the corruption instead
+        # of crashing on a broadcast error.
+        if self.x.shape != self.y.shape or self.x.shape != self.z.shape:
+            return np.zeros(self.x.shape, dtype=bool)
         # NB: the C++ test is ``z <= 0``, and IEEE comparisons against NaN are
         # false, so a NaN z is *not* invalidated by the loader. Negating the
         # same predicate (rather than testing ``z > 0``) reproduces that;
@@ -104,14 +109,21 @@ class Patch:
         """Per-vertex validity from ``mask.tif``, or None when unusable.
 
         Mirrors the loader: channel 0, ``>= 255`` retained, and a mask whose
-        dimensions are an integer multiple of the grid is decimated (a
-        non-integer ratio is ignored by VC3D, so it is ignored here too).
+        dimensions are an integer multiple of the grid maps every mask pixel
+        to grid cell ``(src // scale)``, so *any* below-threshold pixel in a
+        scale x scale block invalidates that vertex (a non-integer ratio is
+        ignored by VC3D, so it is ignored here too).
         """
         if self.mask is None or self.x.size == 0:
             return None
         m = self.mask
         if m.ndim == 3:
-            m = m[..., 0]
+            # tifffile returns (H, W, C) for contiguous TIFFs but (C, H, W)
+            # for PLANARCONFIG_SEPARATE; the loader reads channel 0 either way.
+            if m.shape[-1] <= 4 and m.shape[0] > 4:
+                m = m[..., 0]
+            else:
+                m = m[0]
         if m.ndim != 2:
             return None
         h, w = self.x.shape
@@ -119,7 +131,12 @@ class Patch:
         if (mh, mw) != (h, w):
             if h == 0 or w == 0 or mh % h or mw % w:
                 return None
-            m = m[:: mh // h, :: mw // w][:h, :w]
+            sy, sx = mh // h, mw // w
+            # Match the loader's invalidate(): every mask pixel maps onto
+            # grid cell (src // scale), so a block is retained only when all
+            # its pixels pass the threshold. Plain striding would sample one
+            # pixel per block and keep vertices VC3D discards.
+            m = m[: h * sy, : w * sx].reshape(h, sy, w, sx).min(axis=(1, 3))
         if m.shape != (h, w):
             return None
         return m >= MASK_RETAIN_THRESHOLD
@@ -149,7 +166,8 @@ def load_patch(path: Path, *, load_mask: bool = True) -> Patch:
     meta_path = path / "meta.json"
     if meta_path.is_file():
         try:
-            meta = json.loads(meta_path.read_text())
+            # meta.json is UTF-8 (JSON); never trust the locale encoding.
+            meta = json.loads(meta_path.read_bytes())
         except Exception as e:  # noqa: BLE001
             meta_error = f"{type(e).__name__}: {e}"
     else:

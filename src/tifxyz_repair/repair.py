@@ -70,7 +70,7 @@ def repair_bbox(
             bak.write_bytes(meta_path.read_bytes())
 
     tmp = meta_path.with_name("meta.json.tmp")
-    tmp.write_text(json.dumps(new_meta, indent=4) + "\n")
+    tmp.write_text(json.dumps(new_meta, indent=4) + "\n", encoding="utf-8")
     os.replace(tmp, meta_path)
     patch.meta = new_meta
     return change

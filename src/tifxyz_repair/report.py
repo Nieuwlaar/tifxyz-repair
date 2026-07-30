@@ -43,7 +43,7 @@ def audit_tree(root: Path, workers: int = 8) -> list[dict[str, Any]]:
 
 
 def write_csv(results: list[dict[str, Any]], out: Path) -> None:
-    with open(out, "w", newline="") as fh:
+    with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["path", "status", "check", "severity", "message", "data"])
         for r in results:
@@ -103,5 +103,5 @@ def summarize_markdown(results: list[dict[str, Any]], out: Optional[Path] = None
             lines.append(f"| {drift:.1f} | {frac:.1%} | `{Path(path).name}` |")
     text = "\n".join(lines) + "\n"
     if out is not None:
-        Path(out).write_text(text)
+        Path(out).write_text(text, encoding="utf-8")
     return text

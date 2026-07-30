@@ -85,7 +85,14 @@ def check_vertices(patch: Patch) -> list[Finding]:
     n = valid.size
     n_valid = int(valid.sum())
     if n_valid == 0:
-        out.append(_f("no-valid-vertices", "error", "patch has no valid vertices (all x == -1)"))
+        out.append(
+            _f(
+                "no-valid-vertices",
+                "error",
+                "patch has no valid vertices under the loader's rules "
+                "(x == -1, z <= 0, or masked out)",
+            )
+        )
         return out
 
     pts = patch.points()

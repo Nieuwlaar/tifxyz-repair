@@ -24,27 +24,49 @@ def _print_findings(path: Path, findings, *, verbose: bool) -> None:
         print(f"    {SEV_ICON[f['severity']]} {f['check']}: {f['message']}")
 
 
+def _collect_patches(paths) -> tuple[list[Path], int]:
+    """Resolve CLI path arguments to patch dirs. Returns (patches, exit_code):
+    exit code 2 when a path does not exist or contains no patches at all,
+    so a typo can never masquerade as a clean run."""
+    patches: list[Path] = []
+    bad = False
+    for target in paths:
+        t = Path(target)
+        if not t.exists():
+            print(f"error: path does not exist: {t}", file=sys.stderr)
+            bad = True
+            continue
+        found = find_patches(t)
+        if not found:
+            print(f"error: no tifxyz patches under {t}", file=sys.stderr)
+            bad = True
+        patches.extend(found)
+    return patches, (2 if bad else 0)
+
+
 def cmd_validate(args) -> int:
-    exit_code = 0
+    patches, exit_code = _collect_patches(args.paths)
     results = []
-    for target in args.paths:
-        for p in find_patches(Path(target)):
-            patch = load_patch(p)
-            findings = validate_patch(patch)
-            results.append({"path": str(p), "status": worst_severity(findings), "findings": findings})
-            if any(f["severity"] == "error" for f in findings):
-                exit_code = 1
-            if not args.json:
-                _print_findings(p, findings, verbose=args.verbose)
+    for p in patches:
+        patch = load_patch(p)
+        findings = validate_patch(patch)
+        results.append({"path": str(p), "status": worst_severity(findings), "findings": findings})
+        if exit_code == 0 and any(f["severity"] == "error" for f in findings):
+            exit_code = 1
+        if not args.json:
+            _print_findings(p, findings, verbose=args.verbose)
     if args.json:
         print(json.dumps(results, indent=2))
     return exit_code
 
 
 def cmd_fix(args) -> int:
+    patches, exit_code = _collect_patches(args.paths)
     n_fixed = 0
-    for target in args.paths:
-        for p in find_patches(Path(target)):
+    n_failed = 0
+    for p in patches:
+        # One unreadable patch must never abort the rest of the batch.
+        try:
             patch = load_patch(p)
             change = repair_bbox(
                 patch,
@@ -52,12 +74,21 @@ def cmd_fix(args) -> int:
                 backup=not args.no_backup,
                 strip=args.strip_bbox,
             )
-            if change:
-                n_fixed += 1
-                print(f"{p}: {change}")
+        except Exception as e:  # noqa: BLE001
+            n_failed += 1
+            print(f"error: {p}: {type(e).__name__}: {e}", file=sys.stderr)
+            continue
+        if change:
+            n_fixed += 1
+            print(f"{p}: {change}")
     verb = "would fix" if args.dry_run else "fixed"
-    print(f"\n{verb} {n_fixed} patch(es)")
-    return 0
+    summary = f"\n{verb} {n_fixed} patch(es)"
+    if n_failed:
+        summary += f", {n_failed} failed (see stderr)"
+    print(summary)
+    if n_failed and exit_code == 0:
+        exit_code = 1
+    return exit_code
 
 
 def cmd_report(args) -> int:
@@ -82,23 +113,29 @@ def cmd_inspect(args) -> int:
     except ImportError as e:
         print(f"inspect requires the [deep] extra (scipy, matplotlib): {e}", file=sys.stderr)
         return 2
-    exit_code = 0
+    patches, exit_code = _collect_patches(args.paths)
     export_items = []
-    for target in args.paths:
-        for p in find_patches(Path(target)):
+    for p in patches:
+        # One unreadable patch must never abort the rest of the batch.
+        try:
             patch = load_patch(p)
             metrics = inspect_patch(patch, collect_cells=bool(args.export_pointset))
-            if args.export_pointset:
-                export_items.append((p.name, defect_points(patch, metrics)))
-                metrics.pop("defect_cells", None)  # keep the printed report readable
-            print(f"== {p}")
-            print(json.dumps(metrics, indent=2))
-            if args.png_dir:
-                out_dir = Path(args.png_dir)
-                out_dir.mkdir(parents=True, exist_ok=True)
-                png = out_dir / (p.name + ".png")
-                render_defect_map(patch, metrics, png)
-                print(f"   wrote {png}", file=sys.stderr)
+        except Exception as e:  # noqa: BLE001
+            print(f"error: {p}: {type(e).__name__}: {e}", file=sys.stderr)
+            if exit_code == 0:
+                exit_code = 1
+            continue
+        if args.export_pointset:
+            export_items.append((p.name, defect_points(patch, metrics)))
+            metrics.pop("defect_cells", None)  # keep the printed report readable
+        print(f"== {p}")
+        print(json.dumps(metrics, indent=2))
+        if args.png_dir:
+            out_dir = Path(args.png_dir)
+            out_dir.mkdir(parents=True, exist_ok=True)
+            png = out_dir / (p.name + ".png")
+            render_defect_map(patch, metrics, png)
+            print(f"   wrote {png}", file=sys.stderr)
     if args.export_pointset:
         out = Path(args.export_pointset)
         data = export_pointset(export_items, out)
@@ -109,6 +146,12 @@ def cmd_inspect(args) -> int:
 
 
 def main(argv=None) -> int:
+    # On non-UTF-8 consoles (Windows cp1252, LC_ALL=C) printing the severity
+    # icons must degrade, not crash the run.
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            reconfigure(errors="replace")
     ap = argparse.ArgumentParser(
         prog="tifxyz-repair",
         description="Validate, audit, and repair tifxyz surface-mesh patches "
