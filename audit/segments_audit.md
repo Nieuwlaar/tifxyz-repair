@@ -15,4 +15,6 @@ Meshes audited: **817** across 7 scrolls (every `segments/*/mesh/*.tifxyz` on th
 Error checks across all scrolls: **none, all published segment meshes are clean**
 
 
-**Interpretation.** Every published segment mesh is clean, while 128/5,211 verified *patches* (see `audit.md`) and ~3.6% of sampled *unverified* patches carry stale bboxes. This scopes the villa #1272 corruption to the re-optimization / patch-editing pipeline (auto-grown, lasagna, same-wrap re-fitting). the published segment meshes, written once by flatboi, are unaffected. Good news for anyone consuming the segment meshes directly; the fix still matters for the patch corpora that feed spiral fitting.
+**Interpretation.** Every published segment mesh carries a correct bbox. So do all 35,150 *unverified* patches audited (see `unverified_audit.md`). The stale bboxes are confined to the *verified* patch corpus, 106 of 4,922 patch directories under the definition in villa #1272.
+
+That pattern supports the hypothesis in the issue: the corruption comes from the verification and re-optimization pipeline (auto-grown, lasagna, same-wrap re-fitting), which loads a patch, mutates its grid, and saves it again. Surfaces written once and never re-optimized, whether flatboi segment meshes or freshly generated unverified patches, are unaffected.
