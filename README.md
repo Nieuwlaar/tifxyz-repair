@@ -77,6 +77,22 @@ tifxyz-doctor inspect segment.tifxyz --png-dir defect_maps/
 
 Prints JSON metrics and (optionally) renders per-patch defect-map PNGs (validity, spacing distortion, z-height).
 
+## Use as a library
+
+All checks are importable — embed them in pipelines, dataset publication gates, or CI:
+
+```python
+from tifxyz_doctor.core import load_patch, compute_bbox
+from tifxyz_doctor.checks import validate_patch, worst_severity
+
+patch = load_patch("segment.tifxyz")
+findings = validate_patch(patch)          # list of {check, severity, message, ...}
+assert worst_severity(findings) != "error"
+low, high = compute_bbox(patch)           # ground-truth bbox, QuadSurface semantics
+```
+
+For maintainers of the affected `spiral-input` corpus: [`audit/corrected_bboxes.json`](audit/corrected_bboxes.json) contains ready-to-apply recomputed bboxes for all 128 stale patches — no need to run anything.
+
 ## Semantics: matching VC3D exactly
 
 The reference implementation for this format is C++ (`QuadSurface.cpp` in villa). `tifxyz-doctor` mirrors it deliberately:
