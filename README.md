@@ -88,7 +88,7 @@ The reference implementation for this format is C++ (`QuadSurface.cpp` in villa)
 
 ## Real-world results
 
-Run against the published PHercParis4 `spiral-input` verified-patch corpus (the inputs to whole-scroll spiral fitting), `tifxyz-doctor` independently confirms and quantifies the villa #1272 report — see [`audit/`](audit/) for the full report and CSV produced by:
+Run against the published PHercParis4 `spiral-input` verified-patch corpus (the inputs to whole-scroll spiral fitting; synced 2026-07-30), `tifxyz-doctor` independently confirms and extends the villa #1272 report: **128 of 5,211 patches have stale bboxes** — including the issue's worst known offender (`same_wrap002986_lasagna`, 654-voxel drift, 25.6% of valid vertices outside the stored box) and six patches whose boxes drifted by **10,000–12,566 voxels** in the *over-covering* direction (no vertex loss, but spatial queries match patches they shouldn't). The whole 5,211-patch audit takes ~36 s on 14 workers. See [`audit/`](audit/) for the full report and CSV produced by:
 
 ```bash
 tifxyz-doctor report verified_patches/ --workers 14 --csv audit/audit.csv --out audit/audit.md
