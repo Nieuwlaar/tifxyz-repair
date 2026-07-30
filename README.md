@@ -75,7 +75,11 @@ tifxyz-doctor fix patch/ --strip-bbox           # or remove bbox (mirrors vc_tif
 tifxyz-doctor inspect segment.tifxyz --png-dir defect_maps/
 ```
 
-Prints JSON metrics and (optionally) renders per-patch defect-map PNGs (validity, spacing distortion, z-height).
+Prints JSON metrics and (optionally) renders per-patch defect-map PNGs (validity, spacing distortion, z-height):
+
+![defect map of a real flagged patch](audit/auto_grown_20260420184842414_region_000.png)
+
+*(A real flagged patch from the published corpus: 439-voxel stale bbox, 9 interior holes visible in the validity map.)*
 
 #### Visualize findings in VC3D
 
