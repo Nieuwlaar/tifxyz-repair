@@ -5,8 +5,8 @@ import sys
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
-from tifxyz_doctor.core import find_patches, load_patch
-from tifxyz_doctor.deep import inspect_patch
+from tifxyz_repair.core import find_patches, load_patch
+from tifxyz_repair.deep import inspect_patch
 
 ROOT = Path(sys.argv[1])
 OUT = Path(__file__).parent

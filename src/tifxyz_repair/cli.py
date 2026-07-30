@@ -1,4 +1,4 @@
-"""tifxyz-doctor command-line interface."""
+"""tifxyz-repair command-line interface."""
 
 from __future__ import annotations
 
@@ -110,7 +110,7 @@ def cmd_inspect(args) -> int:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(
-        prog="tifxyz-doctor",
+        prog="tifxyz-repair",
         description="Validate, audit, and repair tifxyz surface-mesh patches "
         "(Vesuvius Challenge / VC3D format).",
     )

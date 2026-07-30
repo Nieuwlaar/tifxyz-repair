@@ -1,6 +1,6 @@
 {
   "description": "Recomputed bboxes for the 128 patches with stale meta.json bboxes in the PHercParis4 spiral-input verified_patches corpus (synced 2026-07-30). Semantics match QuadSurface::bbox(): min/max over vertices with x != -1, [[min_x,min_y,min_z],[max_x,max_y,max_z]]. See villa issue #1272.",
-  "generated_by": "tifxyz-doctor 0.1.0",
+  "generated_by": "tifxyz-repair 0.1.0",
   "patches": {
     "auto_grown_20260415233304257": {
       "stored_bbox": [

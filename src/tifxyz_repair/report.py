@@ -77,7 +77,7 @@ def summarize_markdown(results: list[dict[str, Any]], out: Optional[Path] = None
     stale.sort(reverse=True)
 
     lines = [
-        "# tifxyz-doctor audit report",
+        "# tifxyz-repair audit report",
         "",
         f"Patches audited: **{n}**",
         "",

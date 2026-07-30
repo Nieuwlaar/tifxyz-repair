@@ -251,7 +251,7 @@ def build_pointset(
 ) -> dict[str, Any]:
     """Assemble a VC3D point-collection dict (schema above) from
     ``(patch_name, defect_points(...))`` pairs. One collection per defect
-    type per patch, named ``doctor_<type>_<patch_name>``; collections over
+    type per patch, named ``defect_<type>_<patch_name>``; collections over
     ``max_points`` are thinned (stretch cells arrive worst-first, so
     truncation keeps the worst; the others are subsampled evenly)."""
     now_ms = int(time.time() * 1000)
@@ -272,7 +272,7 @@ def build_pointset(
                 points_obj[str(pt_id)] = {"p": p, "wind_a": None, "creation_time": now_ms}
                 pt_id += 1
             collections[str(col_id)] = {
-                "name": f"doctor_{label}_{patch_name}",
+                "name": f"defect_{label}_{patch_name}",
                 "points": points_obj,
                 "metadata": {"winding_is_absolute": False},
                 "color": list(color),

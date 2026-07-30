@@ -1,4 +1,4 @@
-# tifxyz-doctor audit report
+# tifxyz-repair audit report
 
 Patches audited: **5211**
 

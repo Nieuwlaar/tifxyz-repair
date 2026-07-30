@@ -5,9 +5,9 @@ import numpy as np
 import pytest
 import tifffile
 
-from tifxyz_doctor.checks import validate_patch, worst_severity
-from tifxyz_doctor.core import compute_bbox, find_patches, load_patch
-from tifxyz_doctor.repair import repair_bbox
+from tifxyz_repair.checks import validate_patch, worst_severity
+from tifxyz_repair.core import compute_bbox, find_patches, load_patch
+from tifxyz_repair.repair import repair_bbox
 
 
 def make_patch(
@@ -196,7 +196,7 @@ class TestDiscovery:
 class TestDeep:
     def test_inspect_clean_patch(self, tmp_path):
         pytest.importorskip("scipy")
-        from tifxyz_doctor.deep import inspect_patch
+        from tifxyz_repair.deep import inspect_patch
 
         d = make_patch(tmp_path, shape=(30, 30))
         m = inspect_patch(load_patch(d))
@@ -206,7 +206,7 @@ class TestDeep:
 
     def test_inspect_detects_interior_hole(self, tmp_path):
         pytest.importorskip("scipy")
-        from tifxyz_doctor.deep import inspect_patch
+        from tifxyz_repair.deep import inspect_patch
 
         d = make_patch(tmp_path, shape=(30, 30), invalid_cells=[(10, 10), (10, 11)])
         m = inspect_patch(load_patch(d))
@@ -215,7 +215,7 @@ class TestDeep:
 
     def test_inspect_detects_sheet_switch(self, tmp_path):
         pytest.importorskip("scipy")
-        from tifxyz_doctor.deep import inspect_patch
+        from tifxyz_repair.deep import inspect_patch
 
         # Fold the right half back over the left: distant columns land at
         # identical 3D positions — the sheet-switch signature.
@@ -251,7 +251,7 @@ class TestPointsetExport:
 
     def test_export_matches_vc3d_schema(self, tmp_path):
         pytest.importorskip("scipy")
-        from tifxyz_doctor.deep import defect_points, export_pointset, inspect_patch
+        from tifxyz_repair.deep import defect_points, export_pointset, inspect_patch
 
         d = make_defective_patch(tmp_path)
         patch = load_patch(d)
@@ -305,21 +305,21 @@ class TestPointsetExport:
         # flat id→point map, PointCollections.cpp:633-639)
         assert len(all_point_ids) == len(set(all_point_ids))
         assert names == {
-            f"doctor_switch_{d.name}",
-            f"doctor_hole_{d.name}",
-            f"doctor_stretch_{d.name}",
+            f"defect_switch_{d.name}",
+            f"defect_hole_{d.name}",
+            f"defect_stretch_{d.name}",
         }
 
         # coordinate order: a known suspect cell's grid values must appear as
         # (x, y, z) — make_patch encodes col in x, row in y, constant z
         r, c = cells["self_proximity"][0]
         expected_p = [float(patch.x[r, c]), float(patch.y[r, c]), float(patch.z[r, c])]
-        switch = next(v for v in data["collections"].values() if v["name"] == f"doctor_switch_{d.name}")
+        switch = next(v for v in data["collections"].values() if v["name"] == f"defect_switch_{d.name}")
         assert expected_p in [pt["p"] for pt in switch["points"].values()]
 
     def test_export_caps_points(self, tmp_path):
         pytest.importorskip("scipy")
-        from tifxyz_doctor.deep import defect_points, export_pointset, inspect_patch
+        from tifxyz_repair.deep import defect_points, export_pointset, inspect_patch
 
         d = make_defective_patch(tmp_path)
         patch = load_patch(d)
@@ -329,14 +329,14 @@ class TestPointsetExport:
 
     def test_cli_export_pointset(self, tmp_path, capsys):
         pytest.importorskip("scipy")
-        from tifxyz_doctor.cli import main
+        from tifxyz_repair.cli import main
 
         d = make_defective_patch(tmp_path)
         out = tmp_path / "pointset.json"
         assert main(["inspect", str(d), "--export-pointset", str(out)]) == 0
         data = json.loads(out.read_text())
         assert data["vc_pointcollections_json_version"] == "1"
-        assert any(c["name"].startswith("doctor_switch_") for c in data["collections"].values())
+        assert any(c["name"].startswith("defect_switch_") for c in data["collections"].values())
         # printed metrics stay clean JSON without the cell dump
         printed = capsys.readouterr().out
         assert "defect_cells" not in printed
@@ -344,7 +344,7 @@ class TestPointsetExport:
 
 class TestCli:
     def test_cli_validate_exit_codes(self, tmp_path, capsys):
-        from tifxyz_doctor.cli import main
+        from tifxyz_repair.cli import main
 
         clean = make_patch(tmp_path / "clean")
         assert main(["validate", str(clean)]) == 0
@@ -352,7 +352,7 @@ class TestCli:
         assert main(["validate", str(stale)]) == 1
 
     def test_cli_report(self, tmp_path, capsys):
-        from tifxyz_doctor.cli import main
+        from tifxyz_repair.cli import main
 
         make_patch(tmp_path / "t" / "a", name="p1")
         make_patch(tmp_path / "t" / "b", name="p2", bbox=[[0, 0, 0], [1, 1, 1]])
@@ -364,7 +364,7 @@ class TestCli:
         assert csv_out.exists()
 
     def test_cli_json_output(self, tmp_path, capsys):
-        from tifxyz_doctor.cli import main
+        from tifxyz_repair.cli import main
 
         clean = make_patch(tmp_path)
         assert main(["validate", str(clean), "--json"]) == 0
