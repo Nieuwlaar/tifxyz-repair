@@ -101,18 +101,19 @@ def check_vertices(patch: Patch) -> list[Finding]:
             )
         )
 
-    # Inconsistent sentinel: y or z equals -1 on a vertex whose x does not.
-    # VC3D treats such vertices as valid, so they enter bboxes and meshes
-    # as coordinates on the -1 plane — almost certainly corruption.
-    partial = valid & ((patch.y == -1) | (patch.z == -1))
+    # Inconsistent sentinel: y == -1 on a vertex the loader still considers
+    # valid (x != -1, z > 0, mask retained). z == -1 needs no check — the
+    # loader's z<=0 rule already invalidates it — but a lone y sentinel
+    # survives into meshes and bboxes as a coordinate on the -1 plane.
+    partial = valid & (patch.y == -1)
     n_partial = int(partial.sum())
     if n_partial:
         out.append(
             _f(
                 "partial-sentinel",
                 "warning",
-                f"{n_partial} vertices have y or z == -1 but x != -1 "
-                f"(treated as valid by VC3D, likely corrupt)",
+                f"{n_partial} vertices have y == -1 but remain valid under the "
+                f"loader's rules (x != -1, z > 0, mask retained) — likely corrupt",
                 count=n_partial,
             )
         )

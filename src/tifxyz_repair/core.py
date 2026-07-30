@@ -6,14 +6,17 @@ Semantics deliberately mirror VC3D's C++ implementation
 - A tifxyz patch is a directory with ``x.tif``, ``y.tif``, ``z.tif``
   (float32 2D grids of equal shape; cell (row, col) holds one 3D vertex)
   and a ``meta.json`` sidecar.
-- A vertex is *invalid* when its **x** coordinate equals ``-1``
-  (``QuadSurface::bbox()`` tests only channel 0, see QuadSurface.cpp,
-  ``Rect3D QuadSurface::bbox()``). y/z are ignored for validity.
+- A vertex is *invalid* when any of the following holds, matching what the
+  loader (``load_quad_from_tifxyz_impl``) does before ``QuadSurface::bbox()``
+  is ever called:
+    1. ``z <= 0``            — the loader rewrites the point to (-1,-1,-1)
+    2. ``mask.tif`` channel 0 below 255, when a usable mask is present
+    3. ``x == -1``           — the test ``bbox()`` itself performs
+  Rule 3 alone is *not* sufficient: rules 1 and 2 have already been applied
+  to the in-memory grid, so replaying only rule 3 over the raw TIFFs counts
+  points VC3D treats as invalid and inflates the extent.
 - ``meta.json``'s ``bbox`` is ``[[min_x, min_y, min_z], [max_x, max_y, max_z]]``
   computed over valid vertices only.
-- An optional ``mask.tif`` sidecar may also mark missing cells (nonzero =
-  valid); it is read when present but validity for bbox purposes follows the
-  C++ ``x == -1`` rule.
 """
 
 from __future__ import annotations
@@ -30,6 +33,8 @@ import tifffile
 
 COORD_FILES = ("x.tif", "y.tif", "z.tif")
 INVALID_SENTINEL = -1.0
+# QuadSurface.cpp's mask retain threshold: channel-0 values >= this are kept.
+MASK_RETAIN_THRESHOLD = 255
 
 
 def is_tifxyz_dir(path: Path) -> bool:
@@ -69,8 +74,55 @@ class Patch:
 
     @property
     def valid(self) -> np.ndarray:
-        """Validity mask under VC3D semantics: x != -1."""
-        return self.x != INVALID_SENTINEL
+        """Validity mask under VC3D's loader semantics.
+
+        ``QuadSurface::bbox()`` itself only tests ``x != -1``, but by the
+        time it runs the loader has already invalidated points two other
+        ways (QuadSurface.cpp, ``load_quad_from_tifxyz_impl``):
+
+        1. ``z <= 0`` → point set to (-1, -1, -1)   [\"Invalidate by z<=0\"]
+        2. ``mask.tif`` present → channel 0 below the retain threshold
+           (255) invalidates the point; the mask may be an integer-multiple
+           upscale of the grid, in which case it is sampled down.
+
+        Reproducing only the ``x != -1`` test therefore counts points VC3D
+        considers invalid, which inflates the computed extent and produces
+        false \"stale bbox\" reports. All three rules are applied here.
+        """
+        # NB: the C++ test is ``z <= 0``, and IEEE comparisons against NaN are
+        # false, so a NaN z is *not* invalidated by the loader. Negating the
+        # same predicate (rather than testing ``z > 0``) reproduces that;
+        # NaN coordinates are reported separately by the nan-vertices check.
+        with np.errstate(invalid="ignore"):
+            valid = (self.x != INVALID_SENTINEL) & ~(self.z <= 0)
+        mask = self._mask_valid()
+        if mask is not None:
+            valid = valid & mask
+        return valid
+
+    def _mask_valid(self) -> Optional[np.ndarray]:
+        """Per-vertex validity from ``mask.tif``, or None when unusable.
+
+        Mirrors the loader: channel 0, ``>= 255`` retained, and a mask whose
+        dimensions are an integer multiple of the grid is decimated (a
+        non-integer ratio is ignored by VC3D, so it is ignored here too).
+        """
+        if self.mask is None or self.x.size == 0:
+            return None
+        m = self.mask
+        if m.ndim == 3:
+            m = m[..., 0]
+        if m.ndim != 2:
+            return None
+        h, w = self.x.shape
+        mh, mw = m.shape
+        if (mh, mw) != (h, w):
+            if h == 0 or w == 0 or mh % h or mw % w:
+                return None
+            m = m[:: mh // h, :: mw // w][:h, :w]
+        if m.shape != (h, w):
+            return None
+        return m >= MASK_RETAIN_THRESHOLD
 
     def points(self) -> np.ndarray:
         """(H, W, 3) float32 array in (x, y, z) channel order."""

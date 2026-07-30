@@ -2,15 +2,15 @@
 
 Patches inspected: **5210** (1 failed to load). Split: 4917 ordinary patches, 293 band/backup surfaces (long multi-winding strips).
 
-**Suspect verification.** We hand-checked the top flagged patches in both groups. Band surfaces: suspect pairs sit at median 8.9-voxel 3D distance across ~309-cell UV separation — legitimate adjacent-winding clearance, not duplicated geometry. Top ordinary patches (elongated strips): pairs at 6-9 voxels across 121-243 cells UV, zero near-duplicate (<1 voxel) pairs — consistent with tight winding rather than confirmed sheet switches. In a human-verified corpus this is the expected outcome; the flag's value is marking close-approach zones where automatic mesh growth risks jumping sheets, and in screening *unverified* auto-grown patches.
+Validity follows VC3D's loader (`z<=0`, `mask.tif` channel 0 `<255`, and `x==-1` all invalidate) — see the README. Numbers below were regenerated after that correction.
 
-**Interpretation note.** The `self_proximity` metric flags grid-distant vertex pairs that come close in 3D. For *ordinary local patches* this is a sheet-switch/merger red flag. For *band surfaces* that legitimately wrap around the scroll, adjacent windings naturally pass within a few voxels of each other — we verified the flagged band pairs sit at median 8.9-voxel distance with ~309-cell UV separation and are NOT duplicated geometry. Band-surface flags below are therefore expected geometry, reported separately; they double as a measurement of local winding clearance (min observed: 0.7 voxels).
+**Suspect verification.** We hand-checked the top flagged patches in both groups. Band surfaces: suspect pairs sit at median 8.9-voxel 3D distance across ~309-cell UV separation — legitimate adjacent-winding clearance, not duplicated geometry. Top ordinary patches (elongated strips): pairs at 6-9 voxels across 121-243 cells UV, zero near-duplicate (<1 voxel) pairs — consistent with tight winding rather than confirmed sheet switches. In a human-verified corpus this is the expected outcome; the flag's value is marking close-approach zones where automatic mesh growth risks jumping sheets, and in screening *unverified* auto-grown patches. These are heuristic cues, not a validated sheet-switch detector — for rigorous evaluation of that specific problem see aviad12g/tifxyz-doctor's sealed-holdout benchmark and joe-carr-data/windcheck's self-intersection certificates.
 
 ## Ordinary patches
 
-- with sheet-switch/merger suspects: **44**
-- with interior holes: **620**
-- with >1% stretched edges (>1.5x expected spacing): **510**
+- with sheet-switch/merger suspects: **42**
+- with interior holes: **615**
+- with >1% stretched edges: **510**
 - with >5% normal flips: **18**
 
 ### Top sheet-switch suspects (ordinary patches)
@@ -52,21 +52,6 @@ Patches inspected: **5210** (1 failed to load). Split: 4917 ordinary patches, 29
 | 1 | 490 | 490 | `auto_grown_20260415173749401` |
 | 8 | 479 | 153 | `auto_grown_20260526104703844_flatboi_sel_20260526_113725_1` |
 | 1 | 419 | 419 | `auto_grown_20260415210510251` |
-
-### Worst stretch (ordinary patches)
-
-| stretched edge frac | median spacing | patch |
-|---|---|---|
-| 37.2% | 23.1 | `auto_grown_20260526205436971_sel_20260526_212050_80` |
-| 36.9% | 24.7 | `auto_grown_20260526200530340_sel_20260526_211217_75` |
-| 33.8% | 24.5 | `auto_trace_20260526151328050_sel_20260526_155150_37` |
-| 32.6% | 19.5 | `auto_grown_20260526200530340_sel_20260526_211217_113` |
-| 26.7% | 24.0 | `auto_grown_20260527134144893_sel_20260527_150051_22` |
-| 26.0% | 26.4 | `auto_grown_20260429220809522_sel_20260512_104236_31` |
-| 24.4% | 22.5 | `auto_grown_20260527134144893_sel_20260527_150051_156` |
-| 23.3% | 21.2 | `auto_grown_20260526205436971_sel_20260526_212050_51` |
-| 22.9% | 21.5 | `auto_grown_20260526195309752_sel_20260526_210343_42` |
-| 21.4% | 22.0 | `auto_grown_20260526200530340_sel_20260526_211217_92` |
 
 ## Band/backup surfaces (self-proximity expected)
 

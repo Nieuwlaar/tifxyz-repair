@@ -444,7 +444,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420153834814_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420154014818,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420154248840_region_000,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420163810702_region_000,error,bbox-stale,error,"stored bbox is stale: max drift 12.8 voxels, 0.2% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 12.8154296875, ""per_axis_drift"": [0.0, 0.0, 0.0, 2.68359375, 12.8154296875, 12.61328125], ""stored"": [[4099.80859375, 3637.307373046875, 13097.1767578125], [5433.9892578125, 4338.94921875, 14471.00390625]], ""recomputed"": [[4099.80859375, 3637.307373046875, 13097.1767578125], [5436.6728515625, 4351.7646484375, 14483.6171875]], ""frac_outside"": 0.0024412572474824534}"
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420163810702_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420165215090_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420165353221,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420171458812,info,,,,
@@ -463,14 +463,14 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420182325951_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420182706779_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420184828457_region_000,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420184842414_region_000,error,bbox-stale,error,"stored bbox is stale: max drift 439.0 voxels, 5.4% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 439.0283203125, ""per_axis_drift"": [10.31005859375, 0.0, 439.0283203125, 27.01025390625, 41.43017578125, 28.33984375], ""stored"": [[3778.965087890625, 4034.695556640625, 15060.8369140625], [5159.99462890625, 5344.90673828125, 17141.173828125]], ""recomputed"": [[3768.655029296875, 4034.695556640625, 14621.80859375], [5187.0048828125, 5386.3369140625, 17169.513671875]], ""frac_outside"": 0.05416116248348745}"
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420184842414_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420184901068_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420185110877_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420185429166_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420191133052_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420191353124_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420191533708_region_000,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420191533708_region_001,error,bbox-stale,error,"stored bbox is stale: max drift 280.5 voxels, 5.1% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 280.4580078125, ""per_axis_drift"": [0.0, 0.0, 280.4580078125, 0.0, 195.17333984375, 0.0], ""stored"": [[1779.9227294921875, 2199.80810546875, 13528.2197265625], [2740.71826171875, 4682.1435546875, 16599.6328125]], ""recomputed"": [[1779.9227294921875, 2199.80810546875, 13247.76171875], [2740.71826171875, 4877.31689453125, 16599.6328125]], ""frac_outside"": 0.051252728973905815}"
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420191533708_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420192508567_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420194450556_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420194743432_region_000,info,,,,
@@ -490,7 +490,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420215652470_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420220454942_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420220618223_region_000,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420220618223_region_001,error,bbox-stale,error,"stored bbox is stale: max drift 6.2 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 6.22021484375, ""per_axis_drift"": [0.0, 0.0, 0.0, 6.22021484375, 0.0, 0.0], ""stored"": [[5464.96875, 5193.1328125, 13093.6064453125], [6358.35400390625, 6170.763671875, 14338.5166015625]], ""recomputed"": [[5464.96875, 5193.1328125, 13093.6064453125], [6364.57421875, 6170.763671875, 14338.5166015625]], ""frac_outside"": 0.00031938677738741617}"
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420220618223_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420221357203,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420221433688,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420222552280,info,,,,
@@ -499,7 +499,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420223445609_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420224048693_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420225912281,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420231140710_region_000,error,bbox-stale,error,"stored bbox is stale: max drift 11.5 voxels, 0.1% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 11.50390625, ""per_axis_drift"": [0.0, 0.0, 0.0, 0.0, 0.0, 11.50390625], ""stored"": [[4175.5009765625, 3752.519775390625, 13196.35546875], [5304.20654296875, 4314.642578125, 14291.41015625]], ""recomputed"": [[4175.5009765625, 3752.519775390625, 13196.35546875], [5304.20654296875, 4314.642578125, 14302.9140625]], ""frac_outside"": 0.0008880994671403197}"
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420231140710_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420231540635,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420231721955_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260420232024921_region_000,info,,,,
@@ -546,7 +546,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260421024953128_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260421031101442_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260421031737638_region_002,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260421032659308_region_000,error,bbox-stale,error,"stored bbox is stale: max drift 342.1 voxels, 7.4% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 342.055419921875, ""per_axis_drift"": [0.0, 342.055419921875, 0.0, 215.673583984375, 266.63427734375, 148.6181640625], ""stored"": [[1813.7523193359375, 2465.066162109375, 11236.1865234375], [2517.755615234375, 5253.8759765625, 15386.2998046875]], ""recomputed"": [[1813.7523193359375, 2123.0107421875, 11236.1865234375], [2733.42919921875, 5520.51025390625, 15534.91796875]], ""frac_outside"": 0.07357759904676794}"
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260421032659308_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260421035322209_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260421035917636_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260421040544548_region_000,info,,,,
@@ -654,7 +654,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260427203156553_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260427203219673_region_001,error,bbox-stale,error,"stored bbox is stale: max drift 137.6 voxels, 1.9% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 137.6005859375, ""per_axis_drift"": [137.6005859375, 0.0, 0.0, 0.0, 0.0, 0.0], ""stored"": [[5547.08837890625, 5406.537109375, 10890.7890625], [6579.533203125, 6155.88525390625, 12214.548828125]], ""recomputed"": [[5409.48779296875, 5406.537109375, 10890.7890625], [6579.533203125, 6155.88525390625, 12214.548828125]], ""frac_outside"": 0.018711018711018712}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260427203229840,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260427203309936_region_000,error,bbox-stale,error,"stored bbox is stale: max drift 181.2 voxels, 4.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 181.249755859375, ""per_axis_drift"": [93.2930908203125, 18.59033203125, 0.0, 181.249755859375, 70.38330078125, 93.87109375], ""stored"": [[1987.0723876953125, 2451.439208984375, 10667.443359375], [2612.636962890625, 4998.23876953125, 13474.138671875]], ""recomputed"": [[1893.779296875, 2432.848876953125, 10667.443359375], [2793.88671875, 5068.6220703125, 13568.009765625]], ""frac_outside"": 0.03961331185065837}"
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260427203309936_region_000,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260427203309936_region_001,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260427203309936_region_002,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/auto_grown_20260427203309936_region_003,info,,,,
@@ -4475,7 +4475,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000608_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000616_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000617_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000618_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000618_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 6680.9 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 6680.939453125, ""per_axis_drift"": [4821.94677734375, 3339.9421463012695, 6680.939453125, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.25000762939453125, -0.25], [5142.21826171875, 3867.615478515625, 8579.73046875]], ""recomputed"": [[4821.69677734375, 3339.692138671875, 6680.689453125], [5142.21826171875, 3867.615478515625, 8579.73046875]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000621_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000622_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000623_lasagna,info,,,,
@@ -4538,9 +4538,9 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000740_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000757_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000758_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000760_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000760_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 6997.9 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 6997.86083984375, ""per_axis_drift"": [4189.294923782349, 3387.3679275512695, 6997.86083984375, 0.0, 0.0, 0.0], ""stored"": [[-0.2500019073486328, -0.25000762939453125, -0.25], [4769.7021484375, 3841.73828125, 8635.01171875]], ""recomputed"": [[4189.044921875, 3387.117919921875, 6997.61083984375], [4769.7021484375, 3841.73828125, 8635.01171875]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000770_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000774_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000774_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 7433.4 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 7433.42041015625, ""per_axis_drift"": [4738.77392578125, 2847.0689086914062, 7433.42041015625, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.25006103515625, -0.25], [5160.4560546875, 3330.19970703125, 10550.478515625]], ""recomputed"": [[4738.52392578125, 2846.81884765625, 7433.17041015625], [5160.4560546875, 3330.19970703125, 10550.478515625]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000777_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000778_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000779_lasagna,info,,,,
@@ -4596,7 +4596,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000987_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 90.1 voxels, 14.8% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 90.07177734375, ""per_axis_drift"": [0.0, 38.439453125, 0.0, 90.07177734375, 0.0, 57.896484375], ""stored"": [[5319.6416015625, 3657.75244140625, 7019.58935546875], [5534.19580078125, 4211.37841796875, 7568.2548828125]], ""recomputed"": [[5319.6416015625, 3619.31298828125, 7019.58935546875], [5624.267578125, 4211.37841796875, 7626.1513671875]], ""frac_outside"": 0.14845704753961636}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000988_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000990_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000994_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap000994_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 6575.3 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 6575.30859375, ""per_axis_drift"": [4674.92431640625, 3206.2083129882812, 6575.30859375, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.25006103515625, -0.25], [5082.275390625, 3717.323974609375, 7934.9326171875]], ""recomputed"": [[4674.67431640625, 3205.958251953125, 6575.05859375], [5082.275390625, 3717.323974609375, 7934.9326171875]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001019_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001020_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001027_growpatch,error,bbox-stale,error,"stored bbox is stale: max drift 1.1 voxels, 0.7% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 1.1220703125, ""per_axis_drift"": [1.1220703125, 0.0, 0.0, 0.0, 0.0, 0.3779296875], ""stored"": [[4379.37109375, 2371.48681640625, 9336.296875], [5198.32470703125, 2589.600830078125, 9676.5341796875]], ""recomputed"": [[4378.2490234375, 2371.48681640625, 9336.296875], [5198.32470703125, 2589.600830078125, 9676.912109375]], ""frac_outside"": 0.006587615283267457}"
@@ -4610,7 +4610,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001082_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001083_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001084_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001085_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001085_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 11887.7 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 11887.6591796875, ""per_axis_drift"": [4296.546844482422, 4461.7509765625, 11887.6591796875, 0.0, 0.0, 0.0], ""stored"": [[-0.249969482421875, -0.25, -0.25], [4857.21923828125, 4892.2021484375, 13207.75]], ""recomputed"": [[4296.296875, 4461.5009765625, 11887.4091796875], [4857.21923828125, 4892.2021484375, 13207.75]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001092_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001093_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001094_lasagna,info,,,,
@@ -4805,8 +4805,8 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001687_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001688_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001697_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001698_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001699_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001698_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 8211.0 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 8211.0126953125, ""per_axis_drift"": [4209.050811767578, 2980.770263671875, 8211.0126953125, 0.0, 0.0, 0.0], ""stored"": [[-0.250030517578125, -0.25, -0.25], [4866.56787109375, 3659.29248046875, 8783.62890625]], ""recomputed"": [[4208.80078125, 2980.520263671875, 8210.7626953125], [4866.56787109375, 3659.29248046875, 8783.62890625]], ""frac_outside"": 0.0}"
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001699_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 8204.2 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 8204.2451171875, ""per_axis_drift"": [4091.978485107422, 2900.125244140625, 8204.2451171875, 0.0, 0.0, 0.0], ""stored"": [[-0.249969482421875, -0.25, -0.25], [5007.86669921875, 3550.542236328125, 8785.8955078125]], ""recomputed"": [[4091.728515625, 2899.875244140625, 8203.9951171875], [5007.86669921875, 3550.542236328125, 8785.8955078125]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001701_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 6.9 voxels, 0.1% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 6.8974609375, ""per_axis_drift"": [0.0, 0.0, 0.0, 0.0, 0.0, 6.8974609375], ""stored"": [[3833.4560546875, 2684.3056640625, 8182.11328125], [5039.40185546875, 3530.4052734375, 8777.447265625]], ""recomputed"": [[3833.4560546875, 2684.3056640625, 8182.11328125], [5039.40185546875, 3530.4052734375, 8784.3447265625]], ""frac_outside"": 0.0013315579227696406}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001720_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap001726_lasagna,info,,,,
@@ -4875,7 +4875,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002013_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002015_growpatch,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002018_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 62.5 voxels, 1.4% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 62.4990234375, ""per_axis_drift"": [0.0, 0.0, 0.0, 3.5546875, 0.0, 62.4990234375], ""stored"": [[6581.8232421875, 4559.8564453125, 11725.810546875], [6984.18310546875, 5098.53955078125, 12982.103515625]], ""recomputed"": [[6581.8232421875, 4559.8564453125, 11725.810546875], [6987.73779296875, 5098.53955078125, 13044.6025390625]], ""frac_outside"": 0.014019765571133073}"
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002019_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002019_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 11742.2 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 11742.197204589844, ""per_axis_drift"": [6726.9521484375, 4710.3759765625, 11742.197204589844, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.25, -0.24993896484375], [7136.50244140625, 5240.6982421875, 13232.5400390625]], ""recomputed"": [[6726.7021484375, 4710.1259765625, 11741.947265625], [7136.50244140625, 5240.6982421875, 13232.5400390625]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002020_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002021_growpatch,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002022_growpatch,info,,,,
@@ -4887,7 +4887,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002030_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002031_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002032_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002033_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002033_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 10338.9 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 10338.8955078125, ""per_axis_drift"": [6617.1552734375, 4688.513641357422, 10338.8955078125, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.249969482421875, -0.25], [7106.9228515625, 5227.5986328125, 11352.298828125]], ""recomputed"": [[6616.9052734375, 4688.263671875, 10338.6455078125], [7106.9228515625, 5227.5986328125, 11352.298828125]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002034_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002035_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002036_growpatch,info,,,,
@@ -4987,7 +4987,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002476_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002478_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002479_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002484_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002484_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 9244.5 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 9244.524475097656, ""per_axis_drift"": [3896.01025390625, 2598.396240234375, 9244.524475097656, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.25, -0.25006103515625], [4654.7783203125, 2704.15625, 9748.978515625]], ""recomputed"": [[3895.76025390625, 2598.146240234375, 9244.2744140625], [4654.7783203125, 2704.15625, 9748.978515625]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002485_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002486_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002496_lasagna,info,,,,
@@ -5021,7 +5021,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002580_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002583_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002586_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002587_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002587_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 8788.5 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 8788.452209472656, ""per_axis_drift"": [4029.45068359375, 3469.970458984375, 8788.452209472656, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.25, -0.25006103515625], [4497.88525390625, 3890.30224609375, 9489.060546875]], ""recomputed"": [[4029.20068359375, 3469.720458984375, 8788.2021484375], [4497.88525390625, 3890.30224609375, 9489.060546875]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002588_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002591_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002592_lasagna,info,,,,
@@ -5029,10 +5029,10 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002597_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002598_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002602_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002603_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002603_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 11945.8 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 11945.8271484375, ""per_axis_drift"": [3786.9537963867188, 3881.6591796875, 11945.8271484375, 0.0, 0.0, 0.0], ""stored"": [[-0.24993896484375, -0.25, -0.25], [4221.8935546875, 4718.591796875, 13476.966796875]], ""recomputed"": [[3786.703857421875, 3881.4091796875, 11945.5771484375], [4221.8935546875, 4718.591796875, 13476.966796875]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002604_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002605_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002606_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002606_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 11932.9 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 11932.8544921875, ""per_axis_drift"": [3808.090576171875, 3815.624969482422, 11932.8544921875, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.249969482421875, -0.25], [4246.56494140625, 4672.39599609375, 13554.193359375]], ""recomputed"": [[3807.840576171875, 3815.375, 11932.6044921875], [4246.56494140625, 4672.39599609375, 13554.193359375]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002607_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002608_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap002609_lasagna,info,,,,
@@ -5140,7 +5140,7 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003084_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003085_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003086_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003087_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003087_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 8816.6 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 8816.619140625, ""per_axis_drift"": [4504.955596923828, 3383.111328125, 8816.619140625, 0.0, 0.0, 0.0], ""stored"": [[-0.250030517578125, -0.25, -0.25], [5022.24658203125, 3797.7392578125, 9607.83984375]], ""recomputed"": [[4504.70556640625, 3382.861328125, 8816.369140625], [5022.24658203125, 3797.7392578125, 9607.83984375]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003088_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003089_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003090_lasagna,info,,,,
@@ -5162,13 +5162,13 @@ path,status,check,severity,message,data
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003152_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003154_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003164_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003165_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003165_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 6410.2 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 6410.15625, ""per_axis_drift"": [3925.00732421875, 3384.2749099731445, 6410.15625, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.25000762939453125, -0.25], [4523.98046875, 3937.557373046875, 7519.8017578125]], ""recomputed"": [[3924.75732421875, 3384.02490234375, 6409.90625], [4523.98046875, 3937.557373046875, 7519.8017578125]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003166_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003167_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003176_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 88.4 voxels, 17.4% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 88.3515625, ""per_axis_drift"": [0.0, 0.0, 88.3515625, 0.0, 0.0, 0.0], ""stored"": [[3495.977783203125, 2396.6396484375, 8981.0615234375], [4066.9150390625, 2463.7255859375, 9402.361328125]], ""recomputed"": [[3495.977783203125, 2396.6396484375, 8892.7099609375], [4066.9150390625, 2463.7255859375, 9402.361328125]], ""frac_outside"": 0.17388978063135366}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003177_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003179_lasagna,info,,,,
-/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003181_lasagna,info,,,,
+/mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003181_lasagna,error,bbox-stale,error,"stored bbox is stale: max drift 8034.6 voxels, 0.0% of valid vertices outside the stored box (villa #1272)","{""max_drift"": 8034.5595703125, ""per_axis_drift"": [3374.432861328125, 1677.9662170410156, 8034.5595703125, 0.0, 0.0, 0.0], ""stored"": [[-0.25, -0.250030517578125, -0.25], [4641.60986328125, 1916.157470703125, 8685.6689453125]], ""recomputed"": [[3374.182861328125, 1677.7161865234375, 8034.3095703125], [4641.60986328125, 1916.157470703125, 8685.6689453125]], ""frac_outside"": 0.0}"
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003182_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003183_lasagna,info,,,,
 /mnt/md0/vesuvius/data/spiral-input/PHercParis4/verified_patches/same_wrap003200_lasagna,info,,,,

@@ -4,7 +4,7 @@
 
 `tifxyz` is the grid-topology mesh format used by [VC3D](https://github.com/ScrollPrize/villa/tree/main/volume-cartographer) and the whole Vesuvius segmentation pipeline: a directory with `x.tif`/`y.tif`/`z.tif` (float32 grids of 3D vertices) plus a `meta.json` sidecar. Metadata in these sidecars can silently go **stale** — and downstream tools then silently drop the affected patches.
 
-This tool's reason for existing is the **repair** half: it detects the [villa #1272](https://github.com/ScrollPrize/villa/issues/1272) stale-bounding-box bug, **fixes** it in place, and ships the upstream C++ fix so it stops recurring.
+This tool's reason for existing is the **repair** half: it detects the stale-bounding-box bug reported by @Nicodol in [villa #1272](https://github.com/ScrollPrize/villa/issues/1272), **fixes** it in place, and ships the upstream C++ fix so it stops recurring.
 
 > **Related work.** [`aviad12g/tifxyz-doctor`](https://github.com/aviad12g/tifxyz-doctor) is an excellent **read-only** diagnostic/preflight for the same format (metadata census, Python/C++ reader differential, sentinel-package detection) — released first, and worth using. `tifxyz-repair` is complementary: it focuses on **repairing** the stale-bbox data loss and on the **root-cause fix upstream in VC3D**, rather than diagnostics alone.
 
@@ -12,10 +12,10 @@ This tool's reason for existing is the **repair** half: it detects the [villa #1
 
 | Capability | Detail |
 |---|---|
-| **Detect stale bboxes** | Re-derives each patch's true bbox from the coordinate grids (matching `QuadSurface::bbox()` semantics exactly) and diffs it against `meta.json`. bbox-based filters (e.g. z-range selection of spiral-fit inputs) **silently drop valid patches** when the stored box is wrong. |
+| **Detect stale bboxes** | Re-derives each patch's true bbox from the coordinate grids, reproducing VC3D's full loader validity rules (`z<=0`, `mask.tif`, `x==-1` — see Semantics below) and diffs it against `meta.json`. bbox-based filters (e.g. z-range selection of spiral-fit inputs) **silently drop valid patches** when the stored box is wrong. |
 | **Repair them** | `fix` recomputes and rewrites the bbox in place — atomic write (`meta.json.tmp` + rename, like VC3D), `--dry-run`, automatic `meta.json.bak`, or `--strip-bbox` to erase it (mirroring `vc_tifxyz_trim`). Only the `bbox` field is ever touched. |
 | **Fix the root cause** | Companion villa PR makes `QuadSurface` recompute the bbox at save time, so the corruption stops being produced (see below). |
-| **Guard neighboring failures** | zero/negative voxelsize (the [villa #1226](https://github.com/ScrollPrize/villa/issues/1226) class), NaN/Inf coordinates, `partial-sentinel` vertices (y/z `== -1` while x is not — which VC3D counts as *valid*), malformed bboxes, grid shape/dtype/decoding errors. |
+| **Guard neighboring failures** | zero/negative voxelsize (the [villa #1226](https://github.com/ScrollPrize/villa/issues/1226) class), NaN/Inf coordinates, `partial-sentinel` vertices (`y == -1` on a point the loader still keeps), malformed bboxes, grid shape/dtype/decoding errors. |
 | **Deep geometry inspection** | `inspect`: interior holes, grid-spacing distortion, sheet-switch/merger suspects, normal flips — with defect-map PNGs and a VC3D point-collection export. |
 
 All CPU-only, no GPU required. A full validate pass runs at ~1,000 patches/minute on a 16-core machine.
@@ -53,8 +53,8 @@ tifxyz-repair validate path/to/patch --json        # machine-readable
 Exit code `0` = clean, `1` = at least one error-severity finding.
 
 ```
-[  error] verified_patches/auto_grown_20260420184842414_region_000
-    ✗ bbox-stale: stored bbox is stale: max drift 439.0 voxels, 5.4% of valid vertices outside the stored box (villa #1272)
+[  error] verified_patches/same_wrap002986_lasagna
+    ✗ bbox-stale: stored bbox is stale: max drift 654.3 voxels, 25.6% of valid vertices outside the stored box (villa #1272)
 ```
 
 ### Audit a whole corpus in parallel
@@ -69,9 +69,9 @@ tifxyz-repair report verified_patches/ --workers 14 --csv audit.csv --out audit.
 tifxyz-repair inspect segment.tifxyz --png-dir defect_maps/
 ```
 
-![defect map of a real flagged patch](audit/auto_grown_20260420184842414_region_000.png)
+![defect map of a real flagged patch](audit/same_wrap002986_lasagna.png)
 
-*(A real flagged patch from the published corpus: 439-voxel stale bbox, 9 interior holes visible in the validity map.)*
+*(`same_wrap002986_lasagna` — the worst offender named in villa #1272: 654-voxel stale bbox, 25.6% of valid vertices outside it.)*
 
 #### Visualize findings in VC3D
 
@@ -94,22 +94,35 @@ from tifxyz_repair.checks import validate_patch, worst_severity
 patch = load_patch("segment.tifxyz")
 findings = validate_patch(patch)          # list of {check, severity, message, ...}
 assert worst_severity(findings) != "error"
-low, high = compute_bbox(patch)           # ground-truth bbox, QuadSurface semantics
+low, high = compute_bbox(patch)           # ground-truth bbox, full loader semantics
 ```
 
-For maintainers of the affected `spiral-input` corpus: [`audit/corrected_bboxes.json`](audit/corrected_bboxes.json) contains ready-to-apply recomputed bboxes for all 128 stale patches — no need to run anything.
+For maintainers of the affected `spiral-input` corpus: [`audit/corrected_bboxes.json`](audit/corrected_bboxes.json) contains ready-to-apply recomputed bboxes for all 137 flagged patches — no need to run anything.
 
 ## Semantics: matching VC3D exactly
 
-The reference implementation for this format is C++ (`QuadSurface.cpp` in villa). `tifxyz-repair` mirrors it deliberately:
+The reference implementation for this format is C++ (`QuadSurface.cpp` in villa). Getting validity right is the whole ballgame — replaying only part of it produces false positives, and a repair tool acting on a false positive would corrupt correct data. `tifxyz-repair` reproduces the **loader**, not just `bbox()`:
 
-- **Validity**: a vertex is invalid iff its **x** coordinate `== -1` — VC3D's `QuadSurface::bbox()` tests only channel 0. (That's why `partial-sentinel` vertices, with `-1` in y/z only, are dangerous: VC3D counts them as valid.)
+- **Validity** — a vertex is invalid if **any** of these holds, in the order the loader applies them (`load_quad_from_tifxyz_impl`):
+  1. `z <= 0` — the loader rewrites the point to `(-1, -1, -1)` (comment in source: *"Invalidate by z<=0"*). Note IEEE semantics: `NaN <= 0` is false, so a NaN `z` stays valid; we match that and report it via `nan-vertices` instead.
+  2. `mask.tif` present and channel 0 `< 255` — with integer-multiple decimation when the mask is larger than the grid.
+  3. `x == -1` — the test `QuadSurface::bbox()` itself performs.
+
+  Testing only rule 3 against the raw TIFFs counts points VC3D discards, inflating the extent. That is exactly how v0.1.0 of this tool produced 7 false positives; see [`audit/`](audit/) and the regression tests in `TestLoaderSemantics`.
 - **bbox**: `[[min_x, min_y, min_z], [max_x, max_y, max_z]]` over valid vertices only.
 - **meta.json writing**: indent 4, trailing newline, atomic temp-file + rename — byte-compatible with VC3D's writer.
 
 ## Real-world results
 
-Run against the published PHercParis4 `spiral-input` verified-patch corpus (the inputs to whole-scroll spiral fitting; synced 2026-07-30), `tifxyz-repair` confirms and extends the villa #1272 report: **128 of 5,211 patches have stale bboxes** — including the worst known offender (`same_wrap002986_lasagna`, 654-voxel drift, 25.6% of valid vertices outside the stored box) and six patches whose boxes drifted by **10,000–12,566 voxels** in the *over-covering* direction. All 817 published segment meshes across 7 scrolls, by contrast, are clean — scoping the corruption to the patch / re-optimization pipeline. See [`audit/`](audit/) for the full reports and CSV.
+Run against the published PHercParis4 `spiral-input` verified-patch corpus (the inputs to whole-scroll spiral fitting; synced 2026-07-30), `tifxyz-repair` **independently reproduces villa #1272's figures exactly**.
+
+Using the issue's own definition — valid vertices lying outside the recorded box — **106 of 4,922 patch directories are stale on some axis, 59 of them on z**, matching the counts [@Nicodol reported](https://github.com/ScrollPrize/villa/issues/1272) from an independent implementation. The worst offender is the same one the issue names, `same_wrap002986_lasagna`, at 654 voxels of drift with 25.6% of its valid vertices outside the stored box (the issue reports 24.5% measured on z alone).
+
+Counting drift in *either* direction — including boxes that over-cover, which lose no vertices but make bbox-based spatial queries match patches they shouldn't — raises this to 130 of 4,922; four `same_wrap*_lasagna` patches over-cover by 10,000–12,566 voxels. A further 289 snapshots under `verified_patches/backups/` bring the audited total to 5,211 patches and 137 flagged.
+
+By contrast, all **817 published segment meshes across 7 scrolls** (PHerc 139, 172, 343P, 500P2, 814, 1667, Paris 4) carry correct bboxes — scoping this corruption to the patch / re-optimization pipeline rather than the finished flatboi output. (That check is bbox-integrity only; for *geometric* validation of published segments see [joe-carr-data/windcheck](https://github.com/joe-carr-data/windcheck), which certifies self-intersections and reaches different conclusions about segment quality on a different axis.)
+
+A corpus-wide deep-geometry pass ([`audit/deep_audit.md`](audit/deep_audit.md)) additionally flags — among the 4,917 ordinary patches — 42 with sheet-switch/merger suspects, 615 with interior holes, and 510 with >1% stretched edges, while separating long band surfaces whose self-proximity is legitimate winding clearance. See [`audit/`](audit/) for the full reports and CSV.
 
 ## License
 

@@ -181,6 +181,76 @@ class TestDefects:
         assert get(findings, "tif-read")
 
 
+class TestLoaderSemantics:
+    """The loader invalidates points before QuadSurface::bbox() runs; a bbox
+    computed from `x != -1` alone over-counts and yields false positives."""
+
+    def _write(self, d, x, y, z, bbox=None, mask=None):
+        tifffile.imwrite(d / "x.tif", x.astype(np.float32))
+        tifffile.imwrite(d / "y.tif", y.astype(np.float32))
+        tifffile.imwrite(d / "z.tif", z.astype(np.float32))
+        if mask is not None:
+            tifffile.imwrite(d / "mask.tif", mask.astype(np.uint8))
+        meta = {"format": "tifxyz", "scale": [0.05, 0.05], "type": "seg", "uuid": d.name}
+        if bbox is not None:
+            meta["bbox"] = bbox
+        (d / "meta.json").write_text(json.dumps(meta, indent=4) + "\n")
+
+    def test_z_nonpositive_is_invalid(self, tmp_path):
+        d = make_patch(tmp_path, shape=(10, 10), bbox=None)
+        z = tifffile.imread(d / "z.tif")
+        z[0, :] = -5.0  # loader rewrites these to (-1,-1,-1)
+        tifffile.imwrite(d / "z.tif", z)
+        p = load_patch(d)
+        assert not p.valid[0, :].any()
+        assert p.valid[1:, :].all()
+        assert compute_bbox(p)[0][2] == pytest.approx(300.0)
+
+    def test_mask_excludes_points(self, tmp_path):
+        d = tmp_path / "masked"
+        d.mkdir()
+        ys, xs = np.mgrid[0:10, 0:10].astype(np.float32)
+        x, y, z = 100 + xs * 20, 200 + ys * 20, np.full((10, 10), 300.0, np.float32)
+        mask = np.full((10, 10), 255, np.uint8)
+        mask[:, 9] = 0  # last column masked out
+        self._write(d, x, y, z, mask=mask)
+        p = load_patch(d)
+        assert not p.valid[:, 9].any()
+        assert compute_bbox(p)[1][0] == pytest.approx(100 + 8 * 20)
+
+    def test_mask_integer_upscale_is_decimated(self, tmp_path):
+        d = tmp_path / "upscaled"
+        d.mkdir()
+        ys, xs = np.mgrid[0:8, 0:8].astype(np.float32)
+        x, y, z = 100 + xs * 20, 200 + ys * 20, np.full((8, 8), 300.0, np.float32)
+        mask = np.full((16, 16), 255, np.uint8)  # 2x the grid
+        mask[:, 14:] = 0  # maps to grid column 7
+        self._write(d, x, y, z, mask=mask)
+        p = load_patch(d)
+        assert not p.valid[:, 7].any()
+        assert p.valid[:, :7].all()
+
+    def test_no_false_positive_from_masked_outliers(self, tmp_path):
+        """Regression for the exact bug this class documents: a patch whose
+        stored bbox is correct under loader semantics must not be flagged
+        just because masked/z<=0 outliers lie beyond it."""
+        d = tmp_path / "regression"
+        d.mkdir()
+        ys, xs = np.mgrid[0:10, 0:10].astype(np.float32)
+        x, y, z = 100 + xs * 20, 200 + ys * 20, np.full((10, 10), 300.0, np.float32)
+        mask = np.full((10, 10), 255, np.uint8)
+        # far-away outliers that the loader discards two different ways
+        x[0, 0], y[0, 0] = 9999.0, 9999.0
+        mask[0, 0] = 0
+        x[9, 9], y[9, 9] = -9999.0, -9999.0
+        z[9, 9] = -1.0
+        true_bbox = [[100.0, 200.0, 300.0], [100 + 9 * 20.0, 200 + 9 * 20.0, 300.0]]
+        self._write(d, x, y, z, bbox=true_bbox, mask=mask)
+        findings = validate_patch(load_patch(d))
+        assert not get(findings, "bbox-stale"), "correct bbox must not be reported stale"
+        assert repair_bbox(load_patch(d)) is None, "must not rewrite a correct bbox"
+
+
 class TestDiscovery:
     def test_find_patches_nested(self, tmp_path):
         make_patch(tmp_path / "a", name="p1")
@@ -370,3 +440,16 @@ class TestCli:
         assert main(["validate", str(clean), "--json"]) == 0
         data = json.loads(capsys.readouterr().out)
         assert data[0]["status"] in ("ok", "info")
+
+
+class TestNanSemantics:
+    def test_nan_z_stays_valid_like_cpp(self, tmp_path):
+        """C++ tests `z <= 0`; IEEE says NaN <= 0 is false, so the loader
+        keeps NaN-z points. We must match, or we silently drop them."""
+        d = make_patch(tmp_path, shape=(6, 6), bbox=None)
+        z = tifffile.imread(d / "z.tif")
+        z[2, 2] = np.nan
+        tifffile.imwrite(d / "z.tif", z)
+        p = load_patch(d)
+        assert p.valid[2, 2], "NaN z must remain valid (matches C++ comparison)"
+        assert get(validate_patch(p), "nan-vertices")
