@@ -2,11 +2,15 @@
 
 [![tests](https://github.com/Nieuwlaar/tifxyz-repair/actions/workflows/tests.yml/badge.svg)](https://github.com/Nieuwlaar/tifxyz-repair/actions/workflows/tests.yml)
 
-**Detect *and repair* silent metadata corruption in `tifxyz` surface-mesh patches from the [Vesuvius Challenge](https://scrollprize.org).**
+**106 of the 4,922 human-verified patches feeding PHercParis4 spiral fitting carry stale `meta.json` bounding boxes, and bbox z-range filtering silently drops them from the [Vesuvius Challenge](https://scrollprize.org)'s flagship spiral-fit inputs ([villa #1272](https://github.com/ScrollPrize/villa/issues/1272)). This tool closes that bug end to end.**
 
-`tifxyz` is the grid-topology mesh format used by [VC3D](https://github.com/ScrollPrize/villa/tree/main/volume-cartographer) and the whole Vesuvius segmentation pipeline: a directory with `x.tif`/`y.tif`/`z.tif` (float32 grids of 3D vertices) plus a `meta.json` sidecar. Metadata in these sidecars can silently go stale, and downstream tools then quietly drop the affected patches.
+- **Detect** — re-derives every patch's true bbox by replaying VC3D's loader semantics exactly, and independently reproduces the issue reporter's counts: 106/4,922 stale, 59 on z, worst offender 654 voxels adrift.
+- **Repair** — `tifxyz-repair fix` rewrites a whole corpus in place, safely (atomic writes, `--dry-run`, backups). Maintainers don't even need to run it: [`audit/corrected_bboxes.json`](audit/corrected_bboxes.json) ships ready-to-apply boxes for every flagged patch.
+- **Prevent** — the companion upstream fix, [villa PR #1285](https://github.com/ScrollPrize/villa/pull/1285), makes `QuadSurface` recompute the bbox at save time, with a regression test that fails without it.
 
-This tool's reason for existing is the **repair** half: it detects the stale-bounding-box bug reported by @Nicodol in [villa #1272](https://github.com/ScrollPrize/villa/issues/1272), **fixes** it in place, and ships the upstream C++ fix so it stops recurring.
+Full-corpus audits establish the blast radius: all **40,782** published unverified patches and all **817** published segment meshes across 7 scrolls validate clean, so the corruption is confined to the verified/re-optimization pipeline — exactly where the most human labeling effort is at stake.
+
+`tifxyz` is the grid-topology mesh format used by [VC3D](https://github.com/ScrollPrize/villa/tree/main/volume-cartographer) and the whole Vesuvius segmentation pipeline: a directory of `x.tif`/`y.tif`/`z.tif` float32 coordinate grids plus a `meta.json` sidecar. Stale metadata in that sidecar is invisible until a downstream filter quietly throws away good data.
 
 > **Related work.** [`aviad12g/tifxyz-doctor`](https://github.com/aviad12g/tifxyz-doctor) came first and is a good read-only diagnostic for the same format (metadata census, Python/C++ reader differential, sentinel-package detection). Worth using. This tool covers the other half: repairing the stale-bbox data loss, and fixing the cause upstream in VC3D.
 
