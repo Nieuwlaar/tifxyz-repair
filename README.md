@@ -4,9 +4,9 @@
 
 **106 of the 4,922 human-verified patches feeding PHercParis4 spiral fitting carry stale `meta.json` bounding boxes, and bbox z-range filtering silently drops them from the [Vesuvius Challenge](https://scrollprize.org)'s flagship spiral-fit inputs ([villa #1272](https://github.com/ScrollPrize/villa/issues/1272)). This tool closes that bug end to end.**
 
-- **Detect** — re-derives every patch's true bbox by replaying VC3D's loader semantics exactly, and independently reproduces the issue reporter's counts: 106/4,922 stale, 59 on z, worst offender 654 voxels adrift.
-- **Repair** — `tifxyz-repair fix` rewrites a whole corpus in place, safely (atomic writes, `--dry-run`, backups). Maintainers don't even need to run it: [`audit/corrected_bboxes.json`](audit/corrected_bboxes.json) ships ready-to-apply boxes for every flagged patch.
-- **Prevent** — the companion upstream fix, [villa PR #1285](https://github.com/ScrollPrize/villa/pull/1285), makes `QuadSurface` recompute the bbox at save time, with a regression test that fails without it.
+- **Detect:** re-derives every patch's true bbox by replaying VC3D's loader semantics exactly, and independently reproduces the issue reporter's counts: 106/4,922 stale, 59 on z, worst offender 654 voxels adrift.
+- **Repair:** `tifxyz-repair fix` rewrites a whole corpus in place, safely (atomic writes, `--dry-run`, backups). Maintainers don't even need to run it: [`audit/corrected_bboxes.json`](audit/corrected_bboxes.json) ships ready-to-apply boxes for every flagged patch.
+- **Prevent:** the companion upstream fix, [villa PR #1285](https://github.com/ScrollPrize/villa/pull/1285), makes `QuadSurface` recompute the bbox at save time, with a regression test that fails without it.
 
 Full-corpus audits establish the blast radius: all **40,782** published unverified patches and all **817** published segment meshes across 7 scrolls validate clean, so the corruption is confined to the verified/re-optimization pipeline — exactly where the most human labeling effort is at stake.
 
