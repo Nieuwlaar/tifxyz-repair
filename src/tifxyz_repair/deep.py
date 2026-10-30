@@ -39,7 +39,9 @@ def _expected_spacing(patch: Patch) -> Optional[float]:
     return None
 
 
-def _winding_pairs(idx: np.ndarray, pairs: np.ndarray, n_points: int, min_frac: float, rel_width: float = 0.05) -> np.ndarray:
+def _winding_pairs(
+    idx: np.ndarray, pairs: np.ndarray, n_points: int, min_frac: float, rel_width: float = 0.05, stride: int = 1
+) -> np.ndarray:
     """Boolean mask over ``pairs``: True for pairs that are ordinary winding clearance.
 
     On a multi-wrap band every cell sits next to the neighboring turn of the same sheet, so grid-distant,
@@ -47,7 +49,9 @@ def _winding_pairs(idx: np.ndarray, pairs: np.ndarray, n_points: int, min_frac: 
     surface. A sheet switch or a merger is local, and a fold mirrors the surface, so its offsets vary from
     pair to pair. Pairs are grouped by grid offset (log-scaled bins of ``rel_width``, offset sign removed,
     each bin pooled with its 26 neighbors) and a group counts as winding clearance when it holds at least
-    ``min_frac`` pairs per valid point.
+    ``min_frac`` pairs per valid point. When the grid was subsampled by ``stride`` to bound the KD-tree, both
+    ends of a pair survive with probability 1/stride**2, so the pair density per sampled point falls by 1/stride and
+    the requirement is scaled by the same factor.
     """
     d = idx[pairs[:, 1]] - idx[pairs[:, 0]]
     flip = (d[:, 1] < 0) | ((d[:, 1] == 0) & (d[:, 0] < 0))
@@ -70,7 +74,7 @@ def _winding_pairs(idx: np.ndarray, pairs: np.ndarray, n_points: int, min_frac: 
                     j = lookup.get((m + dm, r + dr, c + dc))
                     if j is not None and j != i:
                         pooled[i] += counts[j]
-    return pooled[inv] >= min_frac * n_points
+    return pooled[inv] >= min_frac * n_points / max(1, stride)
 
 
 def inspect_patch(
@@ -164,6 +168,7 @@ def inspect_patch(
     pts = P[V]
     # Subsample very large grids to keep the KD-tree pass fast.
     max_pts = 400_000
+    stride = 1
     if pts.shape[0] > max_pts:
         stride = int(np.ceil(pts.shape[0] / max_pts))
         pts, idx = pts[::stride], idx[::stride]
@@ -176,7 +181,7 @@ def inspect_patch(
         suspects = np.empty((0, 2), dtype=int)
     winding = 0
     if winding_aware and len(suspects):
-        wmask = _winding_pairs(idx, suspects, len(pts), winding_min_frac)
+        wmask = _winding_pairs(idx, suspects, len(pts), winding_min_frac, stride=stride)
         winding = int(wmask.sum())
         suspects = suspects[~wmask]
     sus_cells = np.unique(idx[suspects.ravel()], axis=0) if suspects.size else np.empty((0, 2), dtype=int)
