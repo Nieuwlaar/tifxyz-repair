@@ -119,7 +119,9 @@ def cmd_inspect(args) -> int:
         # One unreadable patch must never abort the rest of the batch.
         try:
             patch = load_patch(p)
-            metrics = inspect_patch(patch, collect_cells=bool(args.export_pointset))
+            metrics = inspect_patch(
+                patch, collect_cells=bool(args.export_pointset), winding_aware=args.winding_aware
+            )
         except Exception as e:  # noqa: BLE001
             print(f"error: {p}: {type(e).__name__}: {e}", file=sys.stderr)
             if exit_code == 0:
@@ -189,6 +191,12 @@ def main(argv=None) -> int:
     )
     p_ins.add_argument("paths", nargs="+")
     p_ins.add_argument("--png-dir", help="write per-patch defect-map PNGs into this directory")
+    p_ins.add_argument(
+        "--winding-aware",
+        action="store_true",
+        help="on multi-wrap band surfaces, ignore self-proximity pairs that are ordinary winding clearance "
+        "(a surface-wide, nearly constant grid offset between neighboring turns)",
+    )
     p_ins.add_argument(
         "--export-pointset",
         metavar="OUT.json",

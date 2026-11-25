@@ -375,6 +375,37 @@ class TestDeep:
         m = inspect_patch(load_patch(d))
         assert m["self_proximity"]["pairs"] > 0
 
+    def test_winding_aware_ignores_band_clearance_but_keeps_fold(self, tmp_path):
+        pytest.importorskip("scipy")
+        from tifxyz_repair.deep import inspect_patch
+
+        # A band that winds twice: columns c and c+P (one wrap period) sit 5 voxels apart in 3D, everywhere.
+        # That is ordinary winding clearance, not a sheet switch.
+        rows, cols, period = 20, 200, 100
+        d = make_patch(tmp_path / "band", shape=(rows, cols))
+        x = tifffile.imread(d / "x.tif").astype(np.float64)
+        y = tifffile.imread(d / "y.tif").astype(np.float64)
+        z = tifffile.imread(d / "z.tif").astype(np.float64)
+        ang = 2 * np.pi * (np.arange(cols) % period) / period
+        radius = 300.0 + 5.0 * (np.arange(cols) // period)
+        x[:] = (radius * np.cos(ang))[None, :]
+        y[:] = (radius * np.sin(ang))[None, :]
+        z[:] = (np.arange(rows) * 20.0)[:, None]
+        for name, a in (("x", x), ("y", y), ("z", z)):
+            tifffile.imwrite(d / f"{name}.tif", a.astype(np.float32))
+        plain = inspect_patch(load_patch(d))["self_proximity"]
+        aware = inspect_patch(load_patch(d), winding_aware=True)["self_proximity"]
+        assert plain["pairs"] > 0
+        assert aware["pairs"] == 0 and aware["winding_pairs_ignored"] == plain["pairs"]
+
+        # A fold of a long patch is local and mirrors the surface, so the option must still report it.
+        f = make_patch(tmp_path / "fold", shape=(20, 400))
+        fx = tifffile.imread(f / "x.tif")
+        fx[:, 200:] = fx[:, 199::-1]
+        tifffile.imwrite(f / "x.tif", fx.astype(np.float32))
+        kept = inspect_patch(load_patch(f), winding_aware=True)["self_proximity"]
+        assert kept["pairs"] > 0
+
 
 def make_defective_patch(tmp: Path) -> Path:
     """Synthetic patch with all three exportable defect families: a sheet

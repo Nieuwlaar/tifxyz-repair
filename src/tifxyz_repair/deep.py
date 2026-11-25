@@ -39,10 +39,57 @@ def _expected_spacing(patch: Patch) -> Optional[float]:
     return None
 
 
+def _winding_pairs(
+    idx: np.ndarray, pairs: np.ndarray, n_points: int, min_frac: float, rel_width: float = 0.05, stride: int = 1
+) -> np.ndarray:
+    """Boolean mask over ``pairs``: True for pairs that are ordinary winding clearance.
+
+    On a multi-wrap band every cell sits next to the neighboring turn of the same sheet, so grid-distant,
+    3D-close pairs share one nearly constant grid offset (about one wrap period) over a large part of the
+    surface. A sheet switch or a merger is local, and a fold mirrors the surface, so its offsets vary from
+    pair to pair. Pairs are grouped by grid offset (log-scaled bins of ``rel_width``, offset sign removed,
+    each bin pooled with its 26 neighbors) and a group counts as winding clearance when it holds at least
+    ``min_frac`` pairs per valid point. When the grid was subsampled by ``stride`` to bound the KD-tree, both
+    ends of a pair survive with probability 1/stride**2, so the pair density per sampled point falls by 1/stride and
+    the requirement is scaled by the same factor.
+    """
+    d = idx[pairs[:, 1]] - idx[pairs[:, 0]]
+    flip = (d[:, 1] < 0) | ((d[:, 1] == 0) & (d[:, 0] < 0))
+    d = np.where(flip[:, None], -d, d)
+    mag = np.maximum(np.abs(d).max(axis=1), 1).astype(float)
+    k_mag = np.round(np.log(mag) / np.log1p(rel_width)).astype(np.int64)
+    width = np.maximum(1.0, rel_width * mag)
+    k_row = np.round(d[:, 0] / width).astype(np.int64)
+    k_col = np.round(d[:, 1] / width).astype(np.int64)
+    # a bin is identified by (magnitude bin, row bin, col bin); pool with the neighboring magnitude bins
+    keys, inv = np.unique(np.stack([k_mag, k_row, k_col], axis=1), axis=0, return_inverse=True)
+    inv = inv.ravel()
+    counts = np.bincount(inv, minlength=len(keys)).astype(np.int64)
+    pooled = counts.copy()
+    lookup = {tuple(k): i for i, k in enumerate(keys.tolist())}
+    for i, (m, r, c) in enumerate(keys.tolist()):
+        for dm in (-1, 0, 1):
+            for dr in (-1, 0, 1):
+                for dc in (-1, 0, 1):
+                    j = lookup.get((m + dm, r + dr, c + dc))
+                    if j is not None and j != i:
+                        pooled[i] += counts[j]
+    return pooled[inv] >= min_frac * n_points / max(1, stride)
+
+
 def inspect_patch(
-    patch: Patch, *, proximity_factor: float = 0.5, uv_min_dist: int = 10, collect_cells: bool = False
+    patch: Patch,
+    *,
+    proximity_factor: float = 0.5,
+    uv_min_dist: int = 10,
+    collect_cells: bool = False,
+    winding_aware: bool = False,
+    winding_min_frac: float = 0.005,
 ) -> dict[str, Any]:
     """Compute deep geometry metrics. Returns a JSON-serializable dict.
+
+    With ``winding_aware=True`` the self-proximity cue ignores pairs that are ordinary winding clearance on a
+    multi-wrap band (see :func:`_winding_pairs`); the default keeps the original behavior.
 
     With ``collect_cells=True`` the result additionally carries a
     ``defect_cells`` key: ``{defect_type: [[row, col], ...]}`` grid cells
@@ -121,6 +168,7 @@ def inspect_patch(
     pts = P[V]
     # Subsample very large grids to keep the KD-tree pass fast.
     max_pts = 400_000
+    stride = 1
     if pts.shape[0] > max_pts:
         stride = int(np.ceil(pts.shape[0] / max_pts))
         pts, idx = pts[::stride], idx[::stride]
@@ -131,6 +179,11 @@ def inspect_patch(
         suspects = pairs[uv_dist > uv_min_dist]
     else:
         suspects = np.empty((0, 2), dtype=int)
+    winding = 0
+    if winding_aware and len(suspects):
+        wmask = _winding_pairs(idx, suspects, len(pts), winding_min_frac, stride=stride)
+        winding = int(wmask.sum())
+        suspects = suspects[~wmask]
     sus_cells = np.unique(idx[suspects.ravel()], axis=0) if suspects.size else np.empty((0, 2), dtype=int)
     result["self_proximity"] = {
         "pairs": int(len(suspects)),
@@ -138,6 +191,8 @@ def inspect_patch(
         "radius_voxels": float(expected * proximity_factor),
         "note": "grid-distant vertex pairs closer than radius in 3D (sheet-switch/merger suspects)",
     }
+    if winding_aware:
+        result["self_proximity"]["winding_pairs_ignored"] = winding
     if collect_cells:
         defect_cells["self_proximity"] = sus_cells
 
